@@ -65,4 +65,9 @@ class IsUndo(Exception):
     pass
 
 
+class IsQuit(Exception):
+    pass
+
+
 undo = RPNfunction(0, "undo", lambda x: raise_(IsUndo()))
+quit = RPNfunction(0, "quit", lambda x: raise_(IsQuit()))

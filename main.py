@@ -75,6 +75,7 @@ interface.add('-', functions.subtract)
 interface.add('d', functions.divide)
 interface.add('/', functions.divide)
 interface.add('u', functions.undo)
+interface.add('q', functions.quit)
 
 
 def main(screen):
@@ -87,11 +88,11 @@ def main(screen):
     screen.refresh()
     displayStack(stackWindow)
     displayHelp(helpWindow)
-    c = screen.getch()
-    while c != ord('q'):
+
+    while True:
+        c = screen.getch()
         interface.run(c)
         displayStack(stackWindow)
-        c = screen.getch()
 
 
 def displayStack(window):
