@@ -46,7 +46,11 @@ interface.add('+', functions.addition)
 interface.add('a', functions.addition)
 interface.add('x', functions.delete)
 interface.add('m', functions.multiply)
+interface.add('*', functions.multiply)
 interface.add('s', functions.subtract)
+interface.add('-', functions.subtract)
+interface.add('d', functions.divide)
+interface.add('/', functions.divide)
 
 
 def main(screen):
