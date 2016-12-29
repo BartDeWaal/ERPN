@@ -9,6 +9,8 @@ import curseshelper
 stack = []
 undostack = []
 
+stackWindow = None
+
 
 class Interface:
     functions = {}
@@ -28,11 +30,14 @@ class Interface:
             try:
                 self.functions[key].run(stack, undostack)
             except functions.StackToSmallError:
-                pass
+                displayError(stackWindow, "Stack too small")
+                return
             except functions.IsUndo:
                 undostack.pop().apply(stack)
             except functions.IsQuit:
                 exit()
+
+        displayStack(stackWindow)
 
     def entry(self, key):
         self.entryBox.refresh()
@@ -76,8 +81,6 @@ interface.add('m', functions.multiply)
 interface.add('*', functions.multiply)
 interface.add('d', functions.divide)
 interface.add('/', functions.divide)
-
-
 interface.add('p', functions.exponent)
 interface.add('q', functions.square)
 interface.add('S', functions.sqrt)
@@ -89,8 +92,6 @@ interface.add('i', functions.add_inverse)
 interface.add('M', functions.modulo)
 interface.add('E', functions.e)
 interface.add('P', functions.pi)
-
-
 interface.add('u', functions.undo)
 interface.add('Q', functions.quit)
 
@@ -98,10 +99,12 @@ interface.add('Q', functions.quit)
 def main(screen):
     screen.clear()
     helpWindow = curses.newwin(curses.LINES-3, 20, 0, curses.COLS-21)
+    global stackWindow
     stackWindow = curses.newwin(curses.LINES-3, curses.COLS-21, 0, 0)
     interface.entryBox = curses.newwin(1, curses.COLS-1, curses.LINES-2, 0)
 
     curses.init_pair(1, curses.COLOR_WHITE, curses.COLOR_BLACK)
+    curses.init_pair(2, curses.COLOR_RED, curses.COLOR_BLACK)
     screen.refresh()
     displayStack(stackWindow)
     displayHelp(helpWindow)
@@ -109,7 +112,6 @@ def main(screen):
     while True:
         c = screen.getch()
         interface.run(c)
-        displayStack(stackWindow)
 
 
 def displayStack(window):
@@ -122,6 +124,13 @@ def displayStack(window):
 def displayHelp(window):
     window.clear()
     window.addstr(0, 0, interface.helptext())
+    window.refresh()
+
+
+def displayError(window, error):
+    displayStack(window)
+    window.addstr("\n")
+    window.addstr(error, curses.color_pair(2))
     window.refresh()
 
 

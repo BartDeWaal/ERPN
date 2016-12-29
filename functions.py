@@ -71,10 +71,9 @@ modulo = RPNfunction(2, "y mod x", lambda x: [math.fmod(x[0], x[1])])
 e = RPNfunction(0, "e=2.71...", lambda x: [math.e])
 pi = RPNfunction(0, "pi=3.14...", lambda x: [math.pi])
 
+
 # I like to use exceptions as flow control, and I like to define functions using lambda
 # So this is a helper function to let me raise exceptions in lambda:
-
-
 def raise_(ex):
     raise ex
 
