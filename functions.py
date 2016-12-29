@@ -10,6 +10,7 @@ class RPNfunction:
         function should return a list to be added to the stack, and should take a list as input"""
         self.function = function
         self.args = args
+        self.description = description
         self.checkStackSize = checkStackSize
 
     def run(self, stack):

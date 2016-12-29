@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
 import curses
+from collections import defaultdict
+
 import functions
 import curseshelper
 
@@ -40,6 +42,19 @@ class Interface:
         self.entryBox.clear()
         self.entryBox.refresh()
 
+    def helptext(self):
+        items = defaultdict(lambda: [])
+        for item in self.functions:
+            items[self.functions[item]].append(item)
+
+        returnstring = ""
+        for item in items:
+            returnstring += "{}: {}\n".format(
+                    ', '.join(sorted(items[item])),
+                    item.description)
+        returnstring += "q: quit\n"
+        return returnstring
+
 
 interface = Interface()
 interface.add('+', functions.addition)
@@ -62,6 +77,7 @@ def main(screen):
     curses.init_pair(1, curses.COLOR_WHITE, curses.COLOR_BLACK)
     screen.refresh()
     displayStack(stackWindow)
+    displayHelp(helpWindow)
     c = screen.getch()
     while c != ord('q'):
         interface.run(c)
@@ -73,6 +89,12 @@ def displayStack(window):
     window.clear()
     for line, num in zip(stack, range(len(stack), 0, -1)):
         window.addstr("{}: {}\n".format(num, line))
+    window.refresh()
+
+
+def displayHelp(window):
+    window.clear()
+    window.addstr(0, 0, interface.helptext())
     window.refresh()
 
 
