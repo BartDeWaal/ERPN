@@ -13,13 +13,28 @@ class RPNfunction:
         self.description = description
         self.checkStackSize = checkStackSize
 
-    def run(self, stack):
+    def run(self, stack, undostack):
         """ Run the function on the stack """
         if self.checkStackSize and len(stack) < self.args:
             raise StackToSmallError()
         toAdd = self.function(stack[-self.args:])
+        undostack.append(UndoItem(len(toAdd), stack[-self.args:]))
         del stack[-self.args:]
         stack.extend(toAdd)
+
+
+class UndoItem:
+    def __init__(self, remove, add):
+        """ An action to undo something
+        remove: how many items this will remove
+        add: the list of items it will add """
+        self.remove = remove
+        self.add = add
+
+    def apply(self, stack):
+        if self.remove > 0:
+            del stack[-self.remove:]
+        stack.extend(self.add)
 
 
 addition = RPNfunction(2, "add 2", lambda x: [sum(x)], checkStackSize=False)
@@ -37,3 +52,17 @@ subtract = RPNfunction(2, "y-x", lambda x: [x[-2]-x[-1]])
 divide = RPNfunction(2, "y/x", lambda x: [x[-2]/x[-1]])
 
 delete = RPNfunction(1, "delete 1", lambda x: [])
+
+# I like to use exceptions as flow control, and I like to define functions using lambda
+# So this is a helper function to let me raise exceptions in lambda:
+
+
+def raise_(ex):
+    raise ex
+
+
+class IsUndo(Exception):
+    pass
+
+
+undo = RPNfunction(0, "undo", lambda x: raise_(IsUndo()))

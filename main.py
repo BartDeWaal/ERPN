@@ -24,21 +24,29 @@ class Interface:
             self.entry(key)
         if key in self.functions:
             try:
-                self.functions[key].run(stack)
+                self.functions[key].run(stack, undostack)
             except functions.StackToSmallError:
                 pass
+            except functions.IsUndo:
+                undostack.pop().apply(stack)
+            except functions.IsQuit:
+                exit()
 
     def entry(self, key):
         self.entryBox.refresh()
         self.entryBox.addstr(0, 0, key)
         self.entryBox.refresh()
+
         with curseshelper.EchoOn():
             string = key + self.entryBox.getstr(0, 1).decode('utf-8')
+
         try:
             val = float(string)
             stack.append(val)
+            undostack.append(functions.UndoItem(1, []))
         except ValueError:
             pass
+
         self.entryBox.clear()
         self.entryBox.refresh()
 
@@ -66,6 +74,7 @@ interface.add('s', functions.subtract)
 interface.add('-', functions.subtract)
 interface.add('d', functions.divide)
 interface.add('/', functions.divide)
+interface.add('u', functions.undo)
 
 
 def main(screen):
