@@ -5,10 +5,12 @@ import functions
 import curseshelper
 
 stack = []
+undostack = []
+
 
 class Interface:
     functions = {}
-    entryBox = None # replace with a curses box for text entry
+    entryBox = None  # Replace with a curses box for text entry
 
     def add(self, key, function):
         self.functions[key] = function
@@ -26,10 +28,10 @@ class Interface:
 
     def entry(self, key):
         self.entryBox.refresh()
-        self.entryBox.addstr(0,0,key)
+        self.entryBox.addstr(0, 0, key)
         self.entryBox.refresh()
         with curseshelper.EchoOn():
-            string = key + self.entryBox.getstr(0,1).decode('utf-8')
+            string = key + self.entryBox.getstr(0, 1).decode('utf-8')
         try:
             val = float(string)
             stack.append(val)
@@ -46,13 +48,14 @@ interface.add('x', functions.delete)
 interface.add('m', functions.multiply)
 interface.add('s', functions.subtract)
 
+
 def main(screen):
     screen.clear()
     helpWindow = curses.newwin(curses.LINES-3, 20, 0, curses.COLS-21)
     stackWindow = curses.newwin(curses.LINES-3, curses.COLS-21, 0, 0)
     interface.entryBox = curses.newwin(1, curses.COLS-1, curses.LINES-2, 0)
 
-    curses.init_pair(1,curses.COLOR_WHITE,curses.COLOR_BLACK)
+    curses.init_pair(1, curses.COLOR_WHITE, curses.COLOR_BLACK)
     screen.refresh()
     displayStack(stackWindow)
     c = screen.getch()
@@ -64,7 +67,7 @@ def main(screen):
 
 def displayStack(window):
     window.clear()
-    for line, num in zip(stack, range(len(stack),0,-1)):
+    for line, num in zip(stack, range(len(stack), 0, -1)):
         window.addstr("{}: {}\n".format(num, line))
     window.refresh()
 
