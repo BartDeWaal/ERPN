@@ -32,6 +32,9 @@ class Interface:
             except functions.StackToSmallError:
                 displayError(stackWindow, "Stack too small")
                 return
+            except OverflowError:
+                displayError(stackWindow, "Value too large")
+                return
             except functions.IsUndo:
                 undostack.pop().apply(stack)
             except functions.IsQuit:
