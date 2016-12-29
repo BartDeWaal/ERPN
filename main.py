@@ -15,6 +15,8 @@ class Interface:
     entryBox = None  # Replace with a curses box for text entry
 
     def add(self, key, function):
+        if key in self.functions:
+            raise Exception("Already defined key {}".format(key))
         self.functions[key] = function
 
     def run(self, key):
@@ -60,22 +62,37 @@ class Interface:
             returnstring += "{}: {}\n".format(
                     ', '.join(sorted(items[item])),
                     item.description)
-        returnstring += "q: quit\n"
         return returnstring
 
 
 interface = Interface()
+interface.add('x', functions.delete)
+interface.add('z', functions.switch2)
 interface.add('+', functions.addition)
 interface.add('a', functions.addition)
-interface.add('x', functions.delete)
-interface.add('m', functions.multiply)
-interface.add('*', functions.multiply)
 interface.add('s', functions.subtract)
 interface.add('-', functions.subtract)
+interface.add('m', functions.multiply)
+interface.add('*', functions.multiply)
 interface.add('d', functions.divide)
 interface.add('/', functions.divide)
+
+
+interface.add('p', functions.exponent)
+interface.add('q', functions.square)
+interface.add('S', functions.sqrt)
+interface.add('e', functions.e_power)
+interface.add('L', functions.log10)
+interface.add('l', functions.ln)
+interface.add('I', functions.mult_inverse)
+interface.add('i', functions.add_inverse)
+interface.add('M', functions.modulo)
+interface.add('E', functions.e)
+interface.add('P', functions.pi)
+
+
 interface.add('u', functions.undo)
-interface.add('q', functions.quit)
+interface.add('Q', functions.quit)
 
 
 def main(screen):
