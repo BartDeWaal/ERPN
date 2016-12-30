@@ -76,27 +76,14 @@ class Interface:
 
     def entry(self, key):
         """ Let the user enter a line, mainly for entering new numbers """
-        self.entryBox.refresh()
-
-        # '_' means '-' in this context
-        if key == '_':
-            key = '-'
-
-        # display the first character the user already entered
-        self.entryBox.addstr(0, 0, key)
-        self.entryBox.refresh()
-
-        with curseshelper.EchoOn():
-            string = key + self.entryBox.getstr(0, 1).decode('utf-8')
-
+        val, nextkey = curseshelper.getEntry(self.entryBox, key)
         try:
-            val = float(string)
+            val = float(val)
             addToStack(val)
+            displayStack(self.stackWindow)
+            self.run(nextkey)
         except ValueError:
             displayError(self.stackWindow, "Could not decode value")
-
-        self.entryBox.clear()
-        self.entryBox.refresh()
 
     def helptext(self):
         """ Generate the string for the help text in the sidebar.
@@ -133,14 +120,15 @@ interface.add('/', functions.divide)
 interface.add('p', functions.exponent)
 interface.add('q', functions.square)
 interface.add('S', functions.sqrt)
-interface.add('e', functions.e_power)
+interface.add('E', functions.power_e)
+interface.add('e', functions.power_10)  # Should be bound to e for compatability with "1e3" notation
 interface.add('L', functions.log10)
 interface.add('l', functions.ln)
 interface.add('I', functions.mult_inverse)
 interface.add('i', functions.add_inverse)
 interface.add('M', functions.modulo)
-interface.add('E', functions.e)
-interface.add('P', functions.pi)
+interface.add('K', functions.e)  # replace with ctrl-e or alt-e when possible
+interface.add('P', functions.pi)  # replace with ctrl-p or alt-p when possible
 interface.add('t', functions.copy_from_stack)
 interface.add('u', functions.undo)
 interface.add('Q', functions.quit)

@@ -11,3 +11,31 @@ class EchoOn:
 
     def __exit__(self, type, value, traceback):
         curses.noecho()
+
+
+def getEntry(window, key):
+    """ Enter an entry, using the window to display the entry
+        It handles key (a string) as the start of the entry
+        Returns a tuple: (string entered, key pressed to abort entry) """
+    window.refresh()
+
+    # '_' means '-' in this context, to allow users to enter negative numbers
+    if key[0] == '_':
+        key = '-' + key[1:]
+
+    # display the first character(s) the user already entered
+    window.addstr(0, 0, key)
+    window.refresh()
+
+    c = chr(window.getch())
+    while c in "1234567890.e":
+        key = key + c
+        window.clear()
+        window.addstr(0, 0, key)
+        window.refresh()
+        c = chr(window.getch())
+
+    window.clear()
+    window.refresh()
+
+    return key, c
