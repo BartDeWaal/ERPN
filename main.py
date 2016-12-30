@@ -14,7 +14,9 @@ stackWindow = None
 
 class Interface:
     functions = {}
-    entryBox = None  # Replace with a curses box for text entry
+    entryBox = None      # Replace with a curses box for text entry
+    stackWindow = None
+    helpWindow = None
 
     def add(self, key, function):
         if key in self.functions:
@@ -30,17 +32,19 @@ class Interface:
             try:
                 self.functions[key].run(stack, undostack)
             except functions.StackToSmallError:
-                displayError(stackWindow, "Stack too small")
-                return
+                displayError(self.stackWindow, "Stack too small")
+                return  # do not re-display
+
             except OverflowError:
-                displayError(stackWindow, "Value too large")
-                return
+                displayError(self.stackWindow, "Value too large")
+                return  # do not re-display
+
             except functions.IsUndo:
                 undostack.pop().apply(stack)
             except functions.IsQuit:
                 exit()
 
-        displayStack(stackWindow)
+        displayStack(self.stackWindow)
 
     def entry(self, key):
         self.entryBox.refresh()
@@ -55,7 +59,7 @@ class Interface:
             stack.append(val)
             undostack.append(functions.UndoItem(1, []))
         except ValueError:
-            pass
+            displayError(self.stackWindow, "Could not decode value")
 
         self.entryBox.clear()
         self.entryBox.refresh()
@@ -111,8 +115,8 @@ def main(screen):
     curses.init_pair(1, curses.COLOR_WHITE, curses.COLOR_BLACK)
     curses.init_pair(2, curses.COLOR_RED, curses.COLOR_BLACK)  # Used for warnings
     screen.refresh()
-    displayStack(stackWindow)
-    displayHelp(helpWindow)
+    displayStack(interface.stackWindow)
+    displayHelp(interface.helpWindow)
 
     while True:
         c = screen.getch()
