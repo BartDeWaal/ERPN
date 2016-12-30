@@ -47,17 +47,17 @@ def multiply_function(items):
 
 
 # Basic functions
-delete = RPNfunction(1, "delete 1", lambda x: [])
-switch2 = RPNfunction(2, "switch 2", lambda x: [x[1], x[0]])
+delete = RPNfunction(1, "delete x", lambda x: [])
+switch2 = RPNfunction(2, "switch x, y", lambda x: [x[1], x[0]])
 
-addition = RPNfunction(2, "add 2", lambda x: [sum(x)], checkStackSize=False)
+addition = RPNfunction(2, "x+y", lambda x: [sum(x)], checkStackSize=False)
 subtract = RPNfunction(2, "y-x", lambda x: [x[0]-x[1]])
-multiply = RPNfunction(2, "multiply 2", multiply_function, checkStackSize=False)
+multiply = RPNfunction(2, "x*y", multiply_function, checkStackSize=False)
 divide = RPNfunction(2, "y/x", lambda x: [x[0]/x[1]])
 
 exponent = RPNfunction(2, "y^x", lambda x: [x[0]**x[1]])
 square = RPNfunction(1, "x^2", lambda x: [x[0]*x[0]])
-sqrt = RPNfunction(1, "sqrt", lambda x: [math.sqrt(x[0])])
+sqrt = RPNfunction(1, "sqrt x", lambda x: [math.sqrt(x[0])])
 e_power = RPNfunction(1, "e^x", lambda x: [math.exp(x[0])])
 log10 = RPNfunction(1, "log10", lambda x: [math.log10(x[0])])
 ln = RPNfunction(1, "ln", lambda x: [math.log(x[0])])
