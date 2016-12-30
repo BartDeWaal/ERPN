@@ -24,9 +24,11 @@ class RPNfunction:
             raise StackToSmallError()
         toAdd = self.function(stack[-self.args:])
         # Remember how many items we added and which ones we removed so we can undo
-        undostack.append(UndoItem(len(toAdd), stack[-self.args:]))
         if self.args > 0:
+            undostack.append(UndoItem(len(toAdd), stack[-self.args:]))
             del stack[-self.args:]
+        else:
+            undostack.append(UndoItem(len(toAdd), []))
         stack.extend(toAdd)
 
 
