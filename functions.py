@@ -31,6 +31,9 @@ class RPNfunction:
             undostack.append(UndoItem(len(toAdd), []))
         stack.extend(toAdd)
 
+    def __str__(self):
+        return "RPN function, {}, {} args".format(self.description, self.args)
+
 
 class UndoItem:
     def __init__(self, remove, add):
@@ -45,6 +48,9 @@ class UndoItem:
         if self.remove > 0:
             del stack[-self.remove:]
         stack.extend(self.add)
+
+    def __str__(self):
+        return "Undo: Remove {}, add {}".format(self.remove, self.add)
 
 
 def multiply_function(items):
