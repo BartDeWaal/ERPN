@@ -52,7 +52,11 @@ class Interface:
             except functions.IsUndo:
                 # Take the top action from the undostack and apply it to the
                 # stack
-                undostack.pop().apply(stack)
+                if len(undostack) > 0:
+                    undostack.pop().apply(stack)
+                else:
+                    displayError(self.stackWindow, "Nothing to undo")
+
 
             except functions.IsQuit:
                 exit()
