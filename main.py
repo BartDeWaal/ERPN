@@ -110,12 +110,13 @@ class Interface:
         for item in self.functions:
             items[self.functions[item]].append(item)
 
-        returnstring = ""
+        returnstrings = []
         for item in items:
-            returnstring += "{}: {}\n".format(
-                    ', '.join(sorted(items[item])),
-                    item.description)
-        return returnstring
+            returnstrings.append(
+                    "{}: {}".format(', '.join(sorted(items[item])),
+                                    item.description))
+        returnstrings.sort()
+        return "\n".join(returnstrings)
 
 
 interface = Interface()
