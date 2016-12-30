@@ -15,6 +15,7 @@ class Interface:
     entryBox = None      # Replace with a curses box for text entry
     stackWindow = None
     helpWindow = None
+    mainScreen = None
 
     def add(self, key, function):
         """ Add a entry to link a keyboard shortcut to a function """
@@ -57,6 +58,13 @@ class Interface:
                 else:
                     displayError(self.stackWindow, "Nothing to undo")
 
+            except functions.IsCopyFromStack:
+                c = chr(self.mainScreen.getch())
+                try:
+                    addToStack(stack[lineLabelLookup(c)])
+                except:
+                    displayError(self.stackWindow, "Could not lookup value")
+                    return  # keep showing error
 
             except functions.IsQuit:
                 exit()
@@ -124,6 +132,7 @@ interface.add('i', functions.add_inverse)
 interface.add('M', functions.modulo)
 interface.add('E', functions.e)
 interface.add('P', functions.pi)
+interface.add('t', functions.copy_from_stack)
 interface.add('u', functions.undo)
 interface.add('Q', functions.quit)
 
@@ -136,6 +145,7 @@ def main(screen):
                                          0, curses.COLS-helpWindowWidth-1)
     interface.stackWindow = curses.newwin(curses.LINES-2, curses.COLS-helpWindowWidth-1, 0, 0)
     interface.entryBox = curses.newwin(1, curses.COLS-1, curses.LINES-1, 0)
+    interface.mainScreen = screen
 
     curses.init_pair(1, curses.COLOR_WHITE, curses.COLOR_BLACK)
     curses.init_pair(2, curses.COLOR_RED, curses.COLOR_BLACK)  # Used for warnings
@@ -158,6 +168,21 @@ def lineLabel(n):
     if n == 3:
         return 'z'
     return "{}".format(n-3)
+
+
+def lineLabelLookup(key):
+    """ Return the line from the stack (as negative index) to get to the stack
+    item. """
+    if key == 'x':
+        return -1
+    if key == 'y':
+        return -2
+    if key == 'z':
+        return -3
+    num = int(key)
+    if num < 1:
+        raise ValueError("number too low")
+    return -3-num
 
 
 def addToStack(item):

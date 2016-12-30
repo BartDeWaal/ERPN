@@ -95,7 +95,9 @@ def raise_(ex):
 
 class IsUndo(Exception): pass  # noqa
 class IsQuit(Exception): pass  # noqa
+class IsCopyFromStack(Exception): pass  # noqa
 
 
 undo = RPNfunction(0, "undo", lambda x: raise_(IsUndo()))
 quit = RPNfunction(0, "quit", lambda x: raise_(IsQuit()))
+copy_from_stack = RPNfunction(1, "Copy from Stack", lambda x: raise_(IsCopyFromStack()))
