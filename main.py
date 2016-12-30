@@ -75,8 +75,7 @@ class Interface:
 
         try:
             val = float(string)
-            stack.append(val)
-            undostack.append(functions.UndoItem(1, []))
+            addToStack(val)
         except ValueError:
             displayError(self.stackWindow, "Could not decode value")
 
@@ -159,6 +158,11 @@ def lineLabel(n):
     if n == 3:
         return 'z'
     return "{}".format(n-3)
+
+
+def addToStack(item):
+    stack.append(item)
+    undostack.append(functions.UndoItem(1, []))
 
 
 def displayStack(window):
