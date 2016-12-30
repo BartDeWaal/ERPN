@@ -2,6 +2,7 @@ import math
 
 
 class StackToSmallError(Exception):
+    """ The Stack is to small to preform the requested operation """
     pass
 
 
@@ -10,7 +11,8 @@ class RPNfunction:
         """an RPN function.
         rpn is the number of items it takes from the stack
         description is a SHORT description of the function
-        function should return a list to be added to the stack, and should take a list as input"""
+        function should return a list to be added to the stack, and should take a list as input
+        Some functions can use a default element, so they don't need to check the stack size """
         self.function = function
         self.args = args
         self.description = description
@@ -21,6 +23,7 @@ class RPNfunction:
         if self.checkStackSize and len(stack) < self.args:
             raise StackToSmallError()
         toAdd = self.function(stack[-self.args:])
+        # Remember how many items we added and which ones we removed so we can undo
         undostack.append(UndoItem(len(toAdd), stack[-self.args:]))
         if self.args > 0:
             del stack[-self.args:]
@@ -36,12 +39,15 @@ class UndoItem:
         self.add = add
 
     def apply(self, stack):
+        """ Apply the remembered undo action to indicated stack """
         if self.remove > 0:
             del stack[-self.remove:]
         stack.extend(self.add)
 
 
 def multiply_function(items):
+    """ Multiply two items from the stack, if there are no two items use 1
+    instead """
     items = items + [1, 1]
     return [items[0]*items[1]]
 
@@ -72,18 +78,15 @@ e = RPNfunction(0, "e=2.71...", lambda x: [math.e])
 pi = RPNfunction(0, "pi=3.14...", lambda x: [math.pi])
 
 
-# I like to use exceptions as flow control, and I like to define functions using lambda
-# So this is a helper function to let me raise exceptions in lambda:
 def raise_(ex):
+    """I like to use exceptions as flow control, and I like to define functions
+    using lambda So this is a helper function to let me raise exceptions in
+    lambda"""
     raise ex
 
 
-class IsUndo(Exception):
-    pass
-
-
-class IsQuit(Exception):
-    pass
+class IsUndo(Exception): pass  # noqa
+class IsQuit(Exception): pass  # noqa
 
 
 undo = RPNfunction(0, "undo", lambda x: raise_(IsUndo()))

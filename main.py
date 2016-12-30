@@ -6,10 +6,8 @@ from collections import defaultdict
 import functions
 import curseshelper
 
-stack = []
-undostack = []
-
-stackWindow = None
+stack = []  # The stack as displayed to the unit
+undostack = []  # The stack of undo actions
 
 
 class Interface:
@@ -19,18 +17,30 @@ class Interface:
     helpWindow = None
 
     def add(self, key, function):
+        """ Add a entry to link a keyboard shortcut to a function """
         if key in self.functions:
+            # You probably don't want to overwrite everything
             raise Exception("Already defined key {}".format(key))
         self.functions[key] = function
 
     def run(self, key):
+        """ React to a pressed key """
+
+        # make sure key is a string
         if type(key) is int:
             key = chr(key)
+
         if key in '1234567890 .':
+            # if this is a number or starts with a space we want to
+            # let the user enter the whole line
             self.entry(key)
+
         if key in self.functions:
             try:
+                # This function uses exceptions to communicate if something is
+                # not a simple function on the stack
                 self.functions[key].run(stack, undostack)
+
             except functions.StackToSmallError:
                 displayError(self.stackWindow, "Stack too small")
                 return  # do not re-display
@@ -40,14 +50,19 @@ class Interface:
                 return  # do not re-display
 
             except functions.IsUndo:
+                # Take the top action from the undostack and apply it to the
+                # stack
                 undostack.pop().apply(stack)
+
             except functions.IsQuit:
                 exit()
 
         displayStack(self.stackWindow)
 
     def entry(self, key):
+        """ Let the user enter a line, mainly for entering new numbers """
         self.entryBox.refresh()
+        # display the first character the user already entered
         self.entryBox.addstr(0, 0, key)
         self.entryBox.refresh()
 
@@ -65,7 +80,14 @@ class Interface:
         self.entryBox.refresh()
 
     def helptext(self):
+        """ Generate the string for the help text in the sidebar.
+        The information in generated from the configuration """
+
+        # All items in the dicts are [] by default, so we can append to them
+        # without checking if they exist
         items = defaultdict(lambda: [])
+        # The keys in this dict will be the functions they are linked to.
+
         for item in self.functions:
             items[self.functions[item]].append(item)
 
@@ -145,12 +167,14 @@ def displayStack(window):
 
 
 def displayHelp(window):
+    """ Display the help messages in the sidebar """
     window.clear()
     window.addstr(0, 0, interface.helptext())
     window.refresh()
 
 
 def displayError(window, error):
+    """ Display the stack, with an error message """
     displayStack(window)
     window.addstr("\n")
     window.addstr(error, curses.color_pair(2))
