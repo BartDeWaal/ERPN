@@ -119,10 +119,24 @@ def main(screen):
         interface.run(c)
 
 
+def lineLabel(n):
+    """ return how item n (numbered 1-indexed from the top of the stack) should
+    be labeled """
+    if n == 1:
+        return 'x'
+    if n == 2:
+        return 'y'
+    if n == 3:
+        return 'z'
+    return "{}".format(n-3)
+
+
 def displayStack(window):
+    """ Display the stack in window """
     window.clear()
+    # Add the labeled items including numbers
     for line, num in zip(stack, range(len(stack), 0, -1)):
-        window.addstr("{}: {}\n".format(num, line))
+        window.addstr("{}: {}\n".format(lineLabel(num), line))
     window.refresh()
 
 
