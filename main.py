@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# CRPN, a Curses based RPN calculator
+# Copyright (C) 2016 Bart de Waal
+# This program is licenced under the GPL version three, see Licence file for details
 
 import curses
 from collections import defaultdict
