@@ -16,9 +16,14 @@ for tasks you don't do every day.
 It has strong undo functions and a clear overview of what is going on, so you
 don't lose time on typos and mistakes.
 
+## Instructions
+To enter a negative number, you can start entry with an underscore ("_"). This
+will be converted to a "-" in the interface.
+
 ## Todo
 ### Short term
  * Fix crashes, catch math exceptions
+ * Improve number entry
  * Rethink all keyboard shortcuts
  * Add log window (like emacs has)
  * Add way more functions

@@ -34,7 +34,7 @@ class Interface:
         if type(key) is int:
             key = chr(key)
 
-        if key in '1234567890 .':
+        if key in '1234567890 ._':
             # if this is a number or starts with a space we want to
             # let the user enter the whole line
             self.entry(key)
@@ -77,6 +77,11 @@ class Interface:
     def entry(self, key):
         """ Let the user enter a line, mainly for entering new numbers """
         self.entryBox.refresh()
+
+        # '_' means '-' in this context
+        if key == '_':
+            key = '-'
+
         # display the first character the user already entered
         self.entryBox.addstr(0, 0, key)
         self.entryBox.refresh()
