@@ -100,14 +100,16 @@ interface.add('Q', functions.quit)
 
 
 def main(screen):
+    """ Main entrypoint, sets up screens etc. """
     screen.clear()
-    helpWindow = curses.newwin(curses.LINES-3, 20, 0, curses.COLS-21)
-    global stackWindow
-    stackWindow = curses.newwin(curses.LINES-3, curses.COLS-21, 0, 0)
-    interface.entryBox = curses.newwin(1, curses.COLS-1, curses.LINES-2, 0)
+    helpWindowWidth = 21
+    interface.helpWindow = curses.newwin(curses.LINES-2, helpWindowWidth,
+                                         0, curses.COLS-helpWindowWidth-1)
+    interface.stackWindow = curses.newwin(curses.LINES-2, curses.COLS-helpWindowWidth-1, 0, 0)
+    interface.entryBox = curses.newwin(1, curses.COLS-1, curses.LINES-1, 0)
 
     curses.init_pair(1, curses.COLOR_WHITE, curses.COLOR_BLACK)
-    curses.init_pair(2, curses.COLOR_RED, curses.COLOR_BLACK)
+    curses.init_pair(2, curses.COLOR_RED, curses.COLOR_BLACK)  # Used for warnings
     screen.refresh()
     displayStack(stackWindow)
     displayHelp(helpWindow)
