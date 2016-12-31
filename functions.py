@@ -5,6 +5,7 @@
 import math
 
 from domain import Reals, Integers
+from utils.pyperclip import copy
 
 
 class StackToSmallError(Exception):
@@ -17,34 +18,42 @@ class DomainError(Exception):
 
 
 class RPNfunction:
-    def __init__(self, args, description, function, functionDomain=[Reals, Reals], checkStackSize=True):
+    def __init__(self, args, description, function,
+                 functionDomain=[Reals, Reals],
+                 undo=True, checkStackSize=True):
         """an RPN function.
         rpn is the number of items it takes from the stack
         description is a SHORT description of the function
         function should return a list to be added to the stack, and should take a list as input
         functionDomain is a list of domains, element 0 will check argument x etc.
+        undo is for functions like "copy" that would be confusing for a user if they could be undone
         Some functions can use a default element, so they don't need to check the stack size """
         self.function = function
         self.args = args
         self.description = description
         self.checkStackSize = checkStackSize
         self.functionDomain = functionDomain
+        self.undo = undo
 
     def run(self, stack, undostack):
         """ Run the function on the stack """
         if self.checkStackSize and len(stack) < self.args:
             raise StackToSmallError()
 
-        functionArguments = stack[-self.args:]
+        functionArguments = []
+        if self.args > 0:
+            functionArguments = stack[-self.args:]
         self.checkDomain(functionArguments)
 
         toAdd = self.function(functionArguments)
-        # Remember how many items we added and which ones we removed so we can undo
+
+        if(self.undo):
+            # Remember how many items we added and which ones we removed so we can undo
+            undostack.append(UndoItem(len(toAdd), functionArguments))
+
         if self.args > 0:
-            undostack.append(UndoItem(len(toAdd), stack[-self.args:]))
             del stack[-self.args:]
-        else:
-            undostack.append(UndoItem(len(toAdd), []))
+
         stack.extend(toAdd)
 
     def checkDomain(self, arguments):
@@ -96,6 +105,13 @@ def check_exponent_domain(args):
             raise DomainError("Cannot raise 0 to a negative power")
 
 
+def copy_function(args):
+    """ Copy x to the clipboard without changing anything """
+    x = args[-1]
+    copy(str(x))
+    return [x]
+
+
 # Basic functions
 delete = RPNfunction(1, "delete x", lambda x: [])
 switch2 = RPNfunction(2, "switch x, y", lambda x: [x[1], x[0]])
@@ -139,3 +155,4 @@ class IsCopyFromStack(Exception): pass  # noqa
 undo = RPNfunction(0, "undo", lambda x: raise_(IsUndo()))
 quit = RPNfunction(0, "quit", lambda x: raise_(IsQuit()))
 copy_from_stack = RPNfunction(1, "Copy from Stack", lambda x: raise_(IsCopyFromStack()))
+copy_to_OS = RPNfunction(1, "Copy", copy_function, undo=False)

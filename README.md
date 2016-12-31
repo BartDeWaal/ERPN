@@ -49,3 +49,5 @@ example "!m" means alt-m.
 
 ## Licence
 GPL-3
+
+pyperclip used under BSD licence

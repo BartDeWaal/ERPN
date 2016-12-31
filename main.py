@@ -202,6 +202,7 @@ interface.add('!p', functions.pi)
 interface.add('t', functions.copy_from_stack)
 interface.add('u', functions.undo)
 interface.add('Q', functions.quit)
+interface.add('c', functions.copy_to_OS)
 
 
 def main(screen):
