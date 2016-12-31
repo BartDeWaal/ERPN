@@ -5,7 +5,7 @@
 import math
 
 from domain import Reals, Integers
-from utils.pyperclip import copy
+from utils.pyperclip import copy, paste
 
 
 class StackToSmallError(Exception):
@@ -112,6 +112,14 @@ def copy_function(args):
     return [x]
 
 
+def paste_function(args):
+    """ Take value from OS clipboard """
+    try:
+        return([float(paste())])
+    except:
+        raise DomainError("Unable to use clipboard value")
+
+
 # Basic functions
 delete = RPNfunction(1, "delete x", lambda x: [])
 switch2 = RPNfunction(2, "switch x, y", lambda x: [x[1], x[0]])
@@ -156,3 +164,4 @@ undo = RPNfunction(0, "undo", lambda x: raise_(IsUndo()))
 quit = RPNfunction(0, "quit", lambda x: raise_(IsQuit()))
 copy_from_stack = RPNfunction(1, "Copy from Stack", lambda x: raise_(IsCopyFromStack()))
 copy_to_OS = RPNfunction(1, "Copy", copy_function, undo=False)
+paste_from_OS = RPNfunction(0, "Paste", paste_function)

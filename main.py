@@ -203,6 +203,7 @@ interface.add('t', functions.copy_from_stack)
 interface.add('u', functions.undo)
 interface.add('Q', functions.quit)
 interface.add('c', functions.copy_to_OS)
+interface.add('v', functions.paste_from_OS)
 
 
 def main(screen):
