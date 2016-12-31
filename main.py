@@ -49,6 +49,10 @@ class Interface:
                 displayError(self.stackWindow, "Stack too small")
                 return  # do not re-display
 
+            except functions.DomainError as e:
+                displayError(self.stackWindow, str(e))
+                return  # do not re-display
+
             except OverflowError:
                 displayError(self.stackWindow, "Value too large")
                 return  # do not re-display

@@ -22,17 +22,16 @@ will be converted to a "-" in the interface.
 
 ## Todo
 ### Short term
- * Fix crashes, catch math exceptions
- * Improve number entry
  * Rethink all keyboard shortcuts
  * Add log window (like emacs has)
  * Add way more functions
  * Change display settings
  * Make real documentation
  * Better display of the stack
- * Redo
+ * Add Redo functions
 
 ### Longer term
+ * Complex numbers
  * Multiple stacks, including the option to apply commands to more than one
    stack at the same time
  * Save and load stacks
