@@ -103,14 +103,14 @@ switch2 = RPNfunction(2, "switch x, y", lambda x: [x[1], x[0]])
 addition = RPNfunction(2, "x+y", lambda x: [sum(x)], checkStackSize=False)
 subtract = RPNfunction(2, "y-x", lambda x: [x[0]-x[1]])
 multiply = RPNfunction(2, "x*y", multiply_function, checkStackSize=False)
-divide = RPNfunction(2, "y/x", lambda x: [x[0]/x[1]], [Reals - {0}])
+divide = RPNfunction(2, "y/x", lambda x: [x[0]/x[1]], [Reals - {0}, Reals])
 
 exponent = RPNfunction(2, "y^x", lambda x: [x[0]**x[1]])
 exponent.checkDomain = check_exponent_domain
 square = RPNfunction(1, "x^2", lambda x: [x[0]*x[0]])
 sqrt = RPNfunction(1, "sqrt x", lambda x: [math.sqrt(x[0])], [Reals >= 0])
 power_e = RPNfunction(1, "e^x", lambda x: [math.exp(x[0])])
-power_10 = RPNfunction(1, "10^x", lambda x: [math.exp(x[0])])
+power_10 = RPNfunction(1, "10^x", lambda x: [10**x[0]])
 log10 = RPNfunction(1, "log10", lambda x: [math.log10(x[0])], [Reals > 0])
 ln = RPNfunction(1, "ln", lambda x: [math.log(x[0])], [Reals > 0])
 
