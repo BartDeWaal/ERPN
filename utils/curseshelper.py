@@ -59,8 +59,22 @@ def getEntry(window, key):
     window.addstr(0, 0, key)
     window.refresh()
 
+    engineeringkey = "e"  # Allow things like "1e3"
+    decimalpoint = "."
+    if key == '.':
+        decimalpoint = ""  # We shouldn't allow two decimal points
+
     c = window.getkey()
-    while c in "1234567890.e":
+    while c in "1234567890" + engineeringkey + decimalpoint:
+        if engineeringkey == '-':
+            engineeringkey = ""  # stop allowing after the first
+            # the user only has one chance to enter the negative sign
+        if c == 'e':
+            engineeringkey = '-'  # allow for 1e-3
+            decimalpoint = ""  # don't allow decimal point after e
+        if c == ".":
+            decimalpoint = ""  # only one decimal point
+
         key = key + c
         window.clear()
         window.addstr(0, 0, key)
