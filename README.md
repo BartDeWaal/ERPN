@@ -30,7 +30,6 @@ example "!m" means alt-m.
  * Add way more functions
  * Change display settings
  * Make real documentation
- * Better display of the stack
  * Add Redo functions
 
 ### Longer term
@@ -46,6 +45,7 @@ example "!m" means alt-m.
  * Reference (Stuff like common formulas)
  * GUI interface
  * Go back and edit history, redoing all the calculations that came after that
+ * Units of measurement support
 
 ## Licence
 GPL-3

@@ -85,3 +85,27 @@ def getEntry(window, key):
     window.refresh()
 
     return key, c
+
+
+def displayFromBottom(window, lines, displayProperties=None):
+    """ Display things from the bottom of a window. Overflow will be ignored.
+    window is the window to put things in
+    lines is a list of the lines to add
+    The strings should not contain enters"""
+    (y, x) = window.getmaxyx()
+
+    display = min(len(lines), y)  # how many items to display.
+    # This can be limited y the size of the list or by the window
+
+    start = min(y - display, y-1)  # we want at least one or the curser goes to low
+
+    window.clear()
+    window.move(start, 0)
+
+    lines = [line[:x-1] for line in reversed(lines[:display])]  # trunctuate and sort the lines
+
+    if displayProperties is None:
+        window.addstr("\n".join(lines))
+    else:
+        window.addstr("\n".join(lines), displayProperties)
+    window.refresh()

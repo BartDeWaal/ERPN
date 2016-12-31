@@ -19,6 +19,7 @@ class Interface:
     stackWindow = None
     helpWindow = None
     mainScreen = None
+    labelColumn = None
 
     def add(self, key, function):
         """ Add a entry to link a keyboard shortcut to a function """
@@ -34,7 +35,9 @@ class Interface:
             # if this is a number or starts with a space we want to
             # let the user enter the whole line
             self.clearError()
+            self.displayLineLabels(len(stack), True)
             self.entry(key)
+            self.displayLineLabels(len(stack), False)
 
         if key in self.functions:
             try:
@@ -74,7 +77,8 @@ class Interface:
                 # If the function applied and no new errors appeared we can clear the error
                 self.clearError()
 
-        displayStack(self.stackWindow)
+        self.displayStack(stack)
+        self.displayLineLabels(len(stack))
 
     def entry(self, key):
         """ Let the user enter a line, mainly for entering new numbers """
@@ -82,7 +86,7 @@ class Interface:
         try:
             val = float(val)
             addToStack(val)
-            displayStack(self.stackWindow)
+            self.displayStack(stack)
             self.run(nextkey)
         except ValueError:
             self.setError("Could not decode value")
@@ -128,27 +132,47 @@ class Interface:
 
         self.mainScreen = screen
         curses.init_pair(1, curses.COLOR_WHITE, curses.COLOR_BLACK)
-        curses.init_pair(2, curses.COLOR_RED, curses.COLOR_BLACK)  # Used for warnings/Errors
+        curses.init_pair(2, curses.COLOR_RED, curses.COLOR_BLACK)   # Used for warnings/Errors
+        curses.init_pair(3, curses.COLOR_CYAN, curses.COLOR_BLACK)  # Used for line labels
 
         # We use four colums. From left to right:
-        # A left spacer. Some day this may be used to display an arrow
+        # A left column. This includes the label numbers. Some day this may be used to display an arrow
         # The stack column, with the main display
         # A small spacer column
         # And the hel column on th right
         helpColumn = 21
-        leftColumn = 3
+        leftColumn = 8
         spacerColumn = 1
         stackColumn = width - helpColumn - leftColumn - spacerColumn
 
+        self.labelColumn = curses.newwin(height, leftColumn, 0, 0)
 
         x = leftColumn
-        self.stackWindow = curses.newwin(height-2, stackColumn,
-                                              0, x)
+        self.stackWindow = curses.newwin(height-2, stackColumn, 0, x)
         self.entryBox = curses.newwin(1, stackColumn, height-2, x)
         self.errorWindow = curses.newwin(1, stackColumn, height-1, x)
 
         x += stackColumn + spacerColumn
         self.helpWindow = curses.newwin(height-2, helpColumn, 0, x)
+
+    def displayLineLabels(self, stacksize, enteringValue=False):
+        """ Display the labels to the left of the stack.
+        stacksize is the number of items on the stack.
+        While a value is being entered it should go down one to label the new
+        value as it is entered.  """
+        addAtEnd = ["", ""]  # Fill the last few spaces with this
+        if enteringValue:
+            stacksize += 1
+            addAtEnd = [""]
+
+        labels = ["   {:>3}:".format(lineLabel(i)) for i in range(stacksize)]
+
+        curseshelper.displayFromBottom(self.labelColumn, addAtEnd + labels, curses.color_pair(3))
+
+    def displayStack(self, stackObject):
+        """ Display the stack in window. Supply the stack to display """
+        lines = ["{}".format(x) for x in reversed(stackObject[-100:])]  # 100 is the maximum amount of lines I expect
+        curseshelper.displayFromBottom(self.stackWindow, lines)
 
 
 interface = Interface()
@@ -185,8 +209,9 @@ def main(screen):
     screen.clear()
     screen.refresh()
     interface.setupWindows(screen)
-    displayStack(interface.stackWindow)
+    interface.displayStack(stack)
     displayHelp(interface.helpWindow)
+    interface.displayLineLabels(len(stack))
 
     while True:
         c = interface.getKey()
@@ -194,15 +219,15 @@ def main(screen):
 
 
 def lineLabel(n):
-    """ return how item n (numbered 1-indexed from the top of the stack) should
+    """ return how item n (numbered 0-indexed from the top of the stack) should
     be labeled """
-    if n == 1:
+    if n == 0:
         return 'x'
-    if n == 2:
+    if n == 1:
         return 'y'
-    if n == 3:
+    if n == 2:
         return 'z'
-    return "{}".format(n-3)
+    return "{}".format(n-2)
 
 
 def lineLabelLookup(key):
@@ -223,15 +248,6 @@ def lineLabelLookup(key):
 def addToStack(item):
     stack.append(item)
     undostack.append(functions.UndoItem(1, []))
-
-
-def displayStack(window):
-    """ Display the stack in window """
-    window.clear()
-    # Add the labeled items including numbers
-    for line, num in zip(stack, range(len(stack), 0, -1)):
-        window.addstr("{}: {}\n".format(lineLabel(num), line))
-    window.refresh()
 
 
 def displayHelp(window):
