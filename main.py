@@ -7,7 +7,7 @@ import curses
 from collections import defaultdict
 
 import functions
-import curseshelper
+import utils.curseshelper as curseshelper
 
 stack = []  # The stack as displayed to the unit
 undostack = []  # The stack of undo actions
@@ -29,10 +29,6 @@ class Interface:
 
     def run(self, key):
         """ React to a pressed key """
-
-        # make sure key is a string
-        if type(key) is int:
-            key = chr(key)
 
         if key in '1234567890 ._':
             # if this is a number or starts with a space we want to
@@ -66,7 +62,7 @@ class Interface:
                     displayError(self.stackWindow, "Nothing to undo")
 
             except functions.IsCopyFromStack:
-                c = chr(self.mainScreen.getch())
+                c = self.getKey()
                 try:
                     addToStack(stack[lineLabelLookup(c)])
                 except:
@@ -109,8 +105,13 @@ class Interface:
         returnstrings.sort()
         return "\n".join(returnstrings)
 
+    def getKey(self):
+        """ Allow the interface to define how keys are recieved """
+        return curseshelper.getKeyAlt(self.mainScreen)
+
 
 interface = Interface()
+# See utils folder for script that helps figure out what each key does
 interface.add('x', functions.delete)
 interface.add('z', functions.switch2)
 interface.add('+', functions.addition)
@@ -131,8 +132,8 @@ interface.add('l', functions.ln)
 interface.add('I', functions.mult_inverse)
 interface.add('i', functions.add_inverse)
 interface.add('M', functions.modulo)
-interface.add('K', functions.e)  # replace with ctrl-e or alt-e when possible
-interface.add('P', functions.pi)  # replace with ctrl-p or alt-p when possible
+interface.add('!e', functions.e)
+interface.add('!p', functions.pi)
 interface.add('t', functions.copy_from_stack)
 interface.add('u', functions.undo)
 interface.add('Q', functions.quit)
@@ -155,7 +156,7 @@ def main(screen):
     displayHelp(interface.helpWindow)
 
     while True:
-        c = screen.getch()
+        c = interface.getKey()
         interface.run(c)
 
 

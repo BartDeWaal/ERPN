@@ -20,6 +20,9 @@ don't lose time on typos and mistakes.
 To enter a negative number, you can start entry with an underscore ("_"). This
 will be converted to a "-" in the interface.
 
+Commands that are listed as starting with ! mean to combine with alt. So for
+example "!m" means alt-m.
+
 ## Todo
 ### Short term
  * Rethink all keyboard shortcuts
