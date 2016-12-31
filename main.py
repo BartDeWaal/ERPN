@@ -30,9 +30,10 @@ class Interface:
     def run(self, key):
         """ React to a pressed key """
 
-        if key in '1234567890 ._':
+        if key in '1234567890._':
             # if this is a number or starts with a space we want to
             # let the user enter the whole line
+            self.clearError()
             self.entry(key)
 
         if key in self.functions:
@@ -42,35 +43,36 @@ class Interface:
                 self.functions[key].run(stack, undostack)
 
             except functions.StackToSmallError:
-                displayError(self.stackWindow, "Stack too small")
-                return  # do not re-display
+                self.setError("Stack too small")
 
             except functions.DomainError as e:
-                displayError(self.stackWindow, str(e))
-                return  # do not re-display
+                self.setError(str(e))
 
             except OverflowError:
-                displayError(self.stackWindow, "Value too large")
-                return  # do not re-display
+                self.setError("Value too large")
 
             except functions.IsUndo:
                 # Take the top action from the undostack and apply it to the
                 # stack
                 if len(undostack) > 0:
                     undostack.pop().apply(stack)
+                    self.clearError()
                 else:
-                    displayError(self.stackWindow, "Nothing to undo")
+                    self.setError("Nothing to undo")
 
             except functions.IsCopyFromStack:
                 c = self.getKey()
                 try:
                     addToStack(stack[lineLabelLookup(c)])
                 except:
-                    displayError(self.stackWindow, "Could not lookup value")
-                    return  # keep showing error
+                    self.setError("Could not lookup value")
 
             except functions.IsQuit:
                 exit()
+
+            else:
+                # If the function applied and no new errors appeared we can clear the error
+                self.clearError()
 
         displayStack(self.stackWindow)
 
@@ -83,7 +85,7 @@ class Interface:
             displayStack(self.stackWindow)
             self.run(nextkey)
         except ValueError:
-            displayError(self.stackWindow, "Could not decode value")
+            self.setError("Could not decode value")
 
     def helptext(self):
         """ Generate the string for the help text in the sidebar.
@@ -108,6 +110,45 @@ class Interface:
     def getKey(self):
         """ Allow the interface to define how keys are recieved """
         return curseshelper.getKeyAlt(self.mainScreen)
+
+    def setError(self, error_text):
+        """ Display an error """
+        self.errorWindow.clear()
+        self.errorWindow.addstr(error_text, curses.color_pair(2))
+        self.errorWindow.refresh()
+
+    def clearError(self):
+        """ Clear the error display """
+        self.setError("")
+
+    def setupWindows(self, screen):
+        """ Setup the screen layout """
+        width = curses.COLS
+        height = curses.LINES
+
+        self.mainScreen = screen
+        curses.init_pair(1, curses.COLOR_WHITE, curses.COLOR_BLACK)
+        curses.init_pair(2, curses.COLOR_RED, curses.COLOR_BLACK)  # Used for warnings/Errors
+
+        # We use four colums. From left to right:
+        # A left spacer. Some day this may be used to display an arrow
+        # The stack column, with the main display
+        # A small spacer column
+        # And the hel column on th right
+        helpColumn = 21
+        leftColumn = 3
+        spacerColumn = 1
+        stackColumn = width - helpColumn - leftColumn - spacerColumn
+
+
+        x = leftColumn
+        self.stackWindow = curses.newwin(height-2, stackColumn,
+                                              0, x)
+        self.entryBox = curses.newwin(1, stackColumn, height-2, x)
+        self.errorWindow = curses.newwin(1, stackColumn, height-1, x)
+
+        x += stackColumn + spacerColumn
+        self.helpWindow = curses.newwin(height-2, helpColumn, 0, x)
 
 
 interface = Interface()
@@ -142,16 +183,8 @@ interface.add('Q', functions.quit)
 def main(screen):
     """ Main entrypoint, sets up screens etc. """
     screen.clear()
-    helpWindowWidth = 21
-    interface.helpWindow = curses.newwin(curses.LINES-2, helpWindowWidth,
-                                         0, curses.COLS-helpWindowWidth-1)
-    interface.stackWindow = curses.newwin(curses.LINES-2, curses.COLS-helpWindowWidth-1, 0, 0)
-    interface.entryBox = curses.newwin(1, curses.COLS-1, curses.LINES-1, 0)
-    interface.mainScreen = screen
-
-    curses.init_pair(1, curses.COLOR_WHITE, curses.COLOR_BLACK)
-    curses.init_pair(2, curses.COLOR_RED, curses.COLOR_BLACK)  # Used for warnings
     screen.refresh()
+    interface.setupWindows(screen)
     displayStack(interface.stackWindow)
     displayHelp(interface.helpWindow)
 
@@ -205,14 +238,6 @@ def displayHelp(window):
     """ Display the help messages in the sidebar """
     window.clear()
     window.addstr(0, 0, interface.helptext())
-    window.refresh()
-
-
-def displayError(window, error):
-    """ Display the stack, with an error message """
-    displayStack(window)
-    window.addstr("\n")
-    window.addstr(error, curses.color_pair(2))
     window.refresh()
 
 
