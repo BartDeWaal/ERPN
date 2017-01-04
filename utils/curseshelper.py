@@ -50,6 +50,7 @@ def getEntry(window, key):
         It handles key (a string) as the start of the entry
         Returns a tuple: (string entered, key pressed to abort entry) """
     window.refresh()
+    (y, x) = window.getmaxyx()
 
     # '_' means '-' in this context, to allow users to enter negative numbers
     if key[0] == '_':
@@ -76,8 +77,13 @@ def getEntry(window, key):
             decimalpoint = ""  # only one decimal point
 
         key = key + c
+
+        displaykey = key[:x-1]  # Don't display more than the width of the screen
+        if len(key) != len(displaykey):
+            displaykey = displaykey[:-3] + "..."
+
         window.clear()
-        window.addstr(0, 0, key)
+        window.addstr(0, 0, displaykey)
         window.refresh()
         c = window.getkey()
 
