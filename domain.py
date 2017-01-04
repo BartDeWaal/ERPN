@@ -3,6 +3,7 @@
 # This program is licenced under the GPL version three, see Licence file for details
 
 from numbers import Real
+from math import isfinite
 
 
 class Domain:
@@ -12,7 +13,8 @@ class Domain:
         pass
 
     def __contains__(self, item):
-        return isinstance(item, Real)
+        # Include all real numbers, but not floating point numbers like NaN
+        return (isinstance(item, Real) and isfinite(item))
 
     def __add__(self, item):
         return Union(self, item)

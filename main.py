@@ -8,6 +8,7 @@ from collections import defaultdict
 
 import functions
 import utils.curseshelper as curseshelper
+from domain import Reals
 
 stack = []  # The stack as displayed to the unit
 undostack = []  # The stack of undo actions
@@ -85,6 +86,9 @@ class Interface:
         val, nextkey = curseshelper.getEntry(self.entryBox, key)
         try:
             val = float(val)
+            if val not in Reals:
+                # For now our calculator is only for numbers, stuff like "inf" isn't required
+                raise ValueError
             addToStack(val)
             self.displayStack(stack)
             self.run(nextkey)

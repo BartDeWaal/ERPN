@@ -30,6 +30,12 @@ class TestDomain(unittest.TestCase):
         self.assertTrue(0 in (Reals >= 0))
         self.assertTrue(1 in (Reals >= 0))
 
+    def test_special_floats(self):
+        self.assertFalse(float("1e9999") in Reals)  # out of float range
+        self.assertFalse(float("inf") in Reals)
+        self.assertFalse(float("-inf") in Reals)
+        self.assertFalse(float("NaN") in Reals)
+
     def test_set_domain(self):
         dom = domain.SingleValue(1) + domain.SingleValue(2)
         self.assertTrue(1 in dom)
