@@ -105,6 +105,15 @@ def check_exponent_domain(args):
             raise DomainError("Cannot raise 0 to a negative power")
 
 
+def check_tan_domain(args):
+    """ Check the domain for tan(x)
+    This cosists of the real numbers line, excluding pi/2 + k*pi"""
+    x = args[-1]
+    if math.isclose(math.pi/2,
+                    math.fmod(x, math.pi)):
+        raise DomainError("tan(x) is not defined at pi/2 radians")
+
+
 def copy_function(args):
     """ Copy x to the clipboard without changing anything """
     x = args[-1]
@@ -142,6 +151,25 @@ mult_inverse = RPNfunction(1, "1/x", lambda x: [1/x[0]], [Reals - {0}])
 add_inverse = RPNfunction(1, "-x", lambda x: [-x[0]])
 
 modulo = RPNfunction(2, "y mod x", lambda x: [math.fmod(x[0], x[1])], [Reals - {0}, Reals])
+
+# To add:
+sin = RPNfunction(1, "sin x (rad)", lambda x: [math.sin(x[0])])
+cos = RPNfunction(1, "cos x (rad)", lambda x: [math.cos(x[0])])
+tan = RPNfunction(1, "tan x (rad)", lambda x: [math.tan(x[0])])
+tan.checkDomain = check_tan_domain
+
+arcsin = RPNfunction(1, "arcsin x (rad)", lambda x: [math.asin(x[0])],
+                     [(Reals <= 1) >= -1])
+arccos = RPNfunction(1, "arccos x (rad)", lambda x: [math.acos(x[0])],
+                     [(Reals <= 1) >= -1])
+arctan = RPNfunction(1, "arctan x (rad)", lambda x: [math.atan(x[0])])
+
+floor = RPNfunction(1, "floor", lambda x: [math.floor(x[0])])
+ceil = RPNfunction(1, "ceil", lambda x: [math.ceil(x[0])])
+factorial = RPNfunction(1, "factorial",
+                        lambda x: [math.factorial(x[0])],
+                        [Integers])
+# To Add: gcd
 
 # constants
 e = RPNfunction(0, "e=2.71...", lambda x: [math.e])
