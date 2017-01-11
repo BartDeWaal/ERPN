@@ -23,6 +23,10 @@ will be converted to a "-" in the interface.
 Commands that are listed as starting with ! mean to combine with alt. So for
 example "!m" means alt-m.
 
+You can move a marker up and down using the arrows. You can then use t to copy
+(take) that value to the end of the stack, or you can run any function to first
+copy the selected item to the end of the stack and then run the function.
+
 ## Todo
 ### Short term
  * Rethink all keyboard shortcuts

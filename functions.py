@@ -40,6 +40,9 @@ class RPNfunction:
 
     def run(self, stack, undostack, arrowLocation):
         """ Run the function on the stack """
+        self.handleArrow(stack, undostack, arrowLocation)
+
+
         if self.checkStackSize and len(stack) < self.args:
             raise StackToSmallError()
 
@@ -66,6 +69,11 @@ class RPNfunction:
                 if arguments[-1-i] not in self.functionDomain[i]:
                     raise DomainError("'{}' is not defined at {}".format(self.description,
                                                                          arguments[-1-i]))
+
+    def handleArrow(self, stack, undostack, arrowLocation):
+        if arrowLocation != 0:
+            stack.append(stack[-arrowLocation-1])
+            undostack.append(UndoItem(1, []))
 
     def __str__(self):
         return "RPN function, {}, {} args".format(self.description, self.args)
@@ -185,6 +193,9 @@ def raise_(ex):
     lambda"""
     raise ex
 
+def Pass(*args, **namedArgs):
+    pass
+
 
 class IsUndo(Exception): pass  # noqa
 class IsQuit(Exception): pass  # noqa
@@ -206,4 +217,6 @@ copy_to_OS = RPNfunction(1, "Copy", copy_function, undo=False)
 paste_from_OS = RPNfunction(0, "Paste", paste_function)
 
 arrow_up = RPNfunction(0, "Arrow up", lambda x: raise_(IsArrow("up")), display=False, undo=False)
+arrow_up.handleArrow = Pass
 arrow_down = RPNfunction(0, "Arrow down", lambda x: raise_(IsArrow("down")), display=False, undo=False)
+arrow_down.handleArrow = Pass

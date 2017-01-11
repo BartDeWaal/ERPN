@@ -46,7 +46,9 @@ class Interface:
             try:
                 # This function uses exceptions to communicate if something is
                 # not a simple function on the stack
+                self.checkArrowLocation()
                 self.functions[key].run(stack, undostack, self.arrowLocation)
+                self.arrowLocation = 0
 
             except functions.StackToSmallError:
                 self.setError("Stack too small")
@@ -67,11 +69,16 @@ class Interface:
                     self.setError("Nothing to undo")
 
             except functions.IsCopyFromStack:
-                c = self.getKey()
-                try:
-                    addToStack(stack[lineLabelLookup(c)])
-                except:
-                    self.setError("Could not lookup value")
+                if self.arrowLocation == 0:
+                    c = self.getKey()
+                    try:
+                        addToStack(stack[lineLabelLookup(c)])
+                    except:
+                        self.setError("Could not lookup value")
+                else:
+                    addToStack(stack[-self.arrowLocation-1])
+                    self.arrowLocation = 0
+
 
             except functions.IsArrow as e:
                 if e.direction == "up":
