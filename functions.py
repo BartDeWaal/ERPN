@@ -20,22 +20,25 @@ class DomainError(Exception):
 class RPNfunction:
     def __init__(self, args, description, function,
                  functionDomain=[Reals, Reals],
-                 undo=True, checkStackSize=True):
+                 undo=True, checkStackSize=True,
+                 display=True):
         """an RPN function.
         rpn is the number of items it takes from the stack
         description is a SHORT description of the function
         function should return a list to be added to the stack, and should take a list as input
         functionDomain is a list of domains, element 0 will check argument x etc.
         undo is for functions like "copy" that would be confusing for a user if they could be undone
-        Some functions can use a default element, so they don't need to check the stack size """
+        Some functions can use a default element, so they don't need to check the stack size
+        Display indicates whether this function should be displayed in the help bar """
         self.function = function
         self.args = args
         self.description = description
         self.checkStackSize = checkStackSize
         self.functionDomain = functionDomain
         self.undo = undo
+        self.display = display
 
-    def run(self, stack, undostack):
+    def run(self, stack, undostack, arrowLocation):
         """ Run the function on the stack """
         if self.checkStackSize and len(stack) < self.args:
             raise StackToSmallError()
@@ -188,8 +191,19 @@ class IsQuit(Exception): pass  # noqa
 class IsCopyFromStack(Exception): pass  # noqa
 
 
+class IsArrow(Exception):
+    def __init__(self, direction, message="Arrow button pressed", *args):
+        """ Direction should be "up" or "down" """
+        self.message = message
+        self.direction = direction
+        super().__init__(message)
+
+
 undo = RPNfunction(0, "undo", lambda x: raise_(IsUndo()))
 quit = RPNfunction(0, "quit", lambda x: raise_(IsQuit()))
 copy_from_stack = RPNfunction(1, "Copy from Stack", lambda x: raise_(IsCopyFromStack()))
 copy_to_OS = RPNfunction(1, "Copy", copy_function, undo=False)
 paste_from_OS = RPNfunction(0, "Paste", paste_function)
+
+arrow_up = RPNfunction(0, "Arrow up", lambda x: raise_(IsArrow("up")), display=False, undo=False)
+arrow_down = RPNfunction(0, "Arrow down", lambda x: raise_(IsArrow("down")), display=False, undo=False)

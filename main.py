@@ -22,6 +22,8 @@ class Interface:
     mainScreen = None
     labelColumn = None
 
+    arrowLocation = 0  # The location of the arrow selector
+
     def add(self, key, function):
         """ Add a entry to link a keyboard shortcut to a function """
         if key in self.functions:
@@ -44,7 +46,7 @@ class Interface:
             try:
                 # This function uses exceptions to communicate if something is
                 # not a simple function on the stack
-                self.functions[key].run(stack, undostack)
+                self.functions[key].run(stack, undostack, self.arrowLocation)
 
             except functions.StackToSmallError:
                 self.setError("Stack too small")
@@ -70,6 +72,13 @@ class Interface:
                     addToStack(stack[lineLabelLookup(c)])
                 except:
                     self.setError("Could not lookup value")
+
+            except functions.IsArrow as e:
+                if e.direction == "up":
+                    self.arrowLocation += 1
+                else:
+                    self.arrowLocation -= 1
+                self.checkArrowLocation()
 
             except functions.IsQuit:
                 exit()
@@ -109,9 +118,10 @@ class Interface:
 
         returnstrings = []
         for item in items:
-            returnstrings.append(
-                    "{}: {}".format(', '.join(sorted(items[item])),
-                                    item.description))
+            if item.display:
+                returnstrings.append(
+                        "{}: {}".format(', '.join(sorted(items[item])),
+                                        item.description))
         returnstrings.sort()
         return "\n".join(returnstrings)
 
@@ -138,6 +148,7 @@ class Interface:
         curses.init_pair(1, curses.COLOR_WHITE, curses.COLOR_BLACK)
         curses.init_pair(2, curses.COLOR_RED, curses.COLOR_BLACK)   # Used for warnings/Errors
         curses.init_pair(3, curses.COLOR_CYAN, curses.COLOR_BLACK)  # Used for line labels
+        curses.init_pair(4, curses.COLOR_YELLOW, curses.COLOR_BLACK)  # Used for arrows
 
         # We use four colums. From left to right:
         # A left column. This includes the label numbers. Some day this may be used to display an arrow
@@ -172,6 +183,26 @@ class Interface:
         labels = ["   {:>3}:".format(lineLabel(i)) for i in range(stacksize)]
 
         curseshelper.displayFromBottom(self.labelColumn, addAtEnd + labels, curses.color_pair(3))
+
+        self.displayArrow()
+
+    def displayArrow(self):
+        """ Draw the arrow in the left column """
+        arrowLocation = self.arrowLocation
+        window = self.labelColumn
+        (y, x) = window.getmaxyx()
+
+        self.checkArrowLocation()
+
+        spacesNotUsed = 2  # Blank spots at the bottom of the pile that are not used
+        if arrowLocation != 0 and arrowLocation + spacesNotUsed < y:
+            window.addstr(y - arrowLocation - spacesNotUsed - 1, 0, "->", curses.color_pair(4))
+            window.refresh()
+
+    def checkArrowLocation(self):
+        """ Ensure that the arrow is actually pointing at the stack """
+        if self.arrowLocation < 0 or self.arrowLocation >= len(stack):
+            self.arrowLocation = 0
 
     def displayStack(self, stackObject):
         """ Display the stack in window. Supply the stack to display """
@@ -219,6 +250,9 @@ interface.add('u', functions.undo)
 interface.add('Q', functions.quit)
 interface.add('c', functions.copy_to_OS)
 interface.add('v', functions.paste_from_OS)
+
+interface.add('^C', functions.arrow_up)
+interface.add('^B', functions.arrow_down)
 
 
 def main(screen):
