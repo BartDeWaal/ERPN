@@ -162,7 +162,6 @@ add_inverse = RPNfunction(1, "-x", lambda x: [-x[0]])
 
 modulo = RPNfunction(2, "y mod x", lambda x: [math.fmod(x[0], x[1])], [Reals - {0}, Reals])
 
-# To add:
 sin = RPNfunction(1, "sin x (rad)", lambda x: [math.sin(x[0])])
 cos = RPNfunction(1, "cos x (rad)", lambda x: [math.cos(x[0])])
 tan = RPNfunction(1, "tan x (rad)", lambda x: [math.tan(x[0])])
@@ -177,9 +176,10 @@ arctan = RPNfunction(1, "arctan x (rad)", lambda x: [math.atan(x[0])])
 floor = RPNfunction(1, "floor", lambda x: [math.floor(x[0])])
 ceil = RPNfunction(1, "ceil", lambda x: [math.ceil(x[0])])
 factorial = RPNfunction(1, "factorial",
-                        lambda x: [math.factorial(x[0])],
-                        [Integers])
-# To Add: gcd
+                        lambda x: [math.factorial(round(x[0]))],
+                        [Integers >= 0])
+gcd = RPNfunction(2, "GCD", lambda x: [math.gcd(round(x[0]), round(x[1]))],
+                  [Integers > 0, Integers > 0])
 
 # constants
 e = RPNfunction(0, "e=2.71...", lambda x: [math.e])
