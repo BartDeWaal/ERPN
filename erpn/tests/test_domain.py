@@ -4,8 +4,8 @@
 # This program is licenced under the GPL version three, see Licence file for details
 
 import unittest
-from domain import Reals, Integers
-import domain
+from erpn.domain import Reals, Integers
+import erpn.domain as domain
 
 
 class TestDomain(unittest.TestCase):

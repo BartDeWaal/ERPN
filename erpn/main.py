@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 # ERPN, a Curses based RPN calculator
-# Copyright (C) 2016 Bart de Waal
-# This program is licenced under the GPL version three, see Licence file for details
+# Copyright (C) 2017 Bart de Waal
+# This program is licenced under the GPL version 3, see Licence file for details
 
 import curses
 from collections import defaultdict
 
-import functions
-import utils.curseshelper as curseshelper
-from domain import Reals
+from . import functions
+from . import cursesHelper
+from .domain import Reals
 
 stack = []  # The stack as displayed to the unit
 undostack = []  # The stack of undo actions
@@ -98,7 +98,7 @@ class Interface:
 
     def entry(self, key):
         """ Let the user enter a line, mainly for entering new numbers """
-        val, nextkey = curseshelper.getEntry(self.entryBox, key)
+        val, nextkey = cursesHelper.getEntry(self.entryBox, key)
         try:
             val = float(val)
             if val not in Reals:
@@ -133,7 +133,7 @@ class Interface:
 
     def getKey(self):
         """ Allow the interface to define how keys are recieved """
-        return curseshelper.getKeyAlt(self.mainScreen)
+        return cursesHelper.getKeyAlt(self.mainScreen)
 
     def setError(self, error_text):
         """ Display an error """
@@ -188,7 +188,7 @@ class Interface:
 
         labels = ["   {:>3}:".format(lineLabel(i)) for i in range(stacksize)]
 
-        curseshelper.displayFromBottom(self.labelColumn, addAtEnd + labels, curses.color_pair(3))
+        cursesHelper.displayFromBottom(self.labelColumn, addAtEnd + labels, curses.color_pair(3))
 
         self.displayArrow()
 
@@ -213,7 +213,7 @@ class Interface:
     def displayStack(self, stackObject):
         """ Display the stack in window. Supply the stack to display """
         lines = ["{}".format(x) for x in reversed(stackObject[-100:])]  # 100 is the maximum amount of lines I expect
-        curseshelper.displayFromBottom(self.stackWindow, lines)
+        cursesHelper.displayFromBottom(self.stackWindow, lines)
 
 
 interface = Interface()
@@ -267,7 +267,7 @@ interface.add('^B', functions.arrow_down)
 interface.add('j', functions.arrow_down)
 
 
-def main(screen):
+def cursesMain(screen):
     """ Main entrypoint, sets up screens etc. """
     screen.clear()
     screen.refresh()
@@ -320,4 +320,5 @@ def displayHelp(window):
     window.refresh()
 
 
-curses.wrapper(main)
+def main():
+    curses.wrapper(cursesMain)

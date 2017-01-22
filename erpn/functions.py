@@ -1,11 +1,11 @@
 # ERPN, an RPN calculator
-# Copyright (C) 2016 Bart de Waal
+# Copyright (C) 2017 Bart de Waal
 # This program is licenced under the GPL version three, see Licence file for details
 
 import math
 
-from domain import Reals, Integers
-from utils.pyperclip import copy, paste
+from .domain import Reals, Integers
+from pyperclip import copy, paste
 
 
 class StackToSmallError(Exception):
@@ -24,7 +24,7 @@ class RPNfunction:
                  display=True):
         """an RPN function.
         rpn is the number of items it takes from the stack
-        description is a SHORT description of the function
+        description is a short description of the function
         function should return a list to be added to the stack, and should take a list as input
         functionDomain is a list of domains, element 0 will check argument x etc.
         undo is for functions like "copy" that would be confusing for a user if they could be undone
