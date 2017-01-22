@@ -223,9 +223,9 @@ arrow_down.handleArrow = Pass
 
 
 class CopyCurrent(RPNfunction):
-    def __init__(self):
+    def __init__(self, display=True):
         self.description = "Copy Current"
-        self.display = False  # Space and enter (^J) both look weird in the sidebar, so don't list
+        self.display = display
 
     def run(self, stack, undostack, arrowLocation):
         if len(stack) < 1:
