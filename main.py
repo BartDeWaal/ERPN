@@ -79,7 +79,6 @@ class Interface:
                     addToStack(stack[-self.arrowLocation-1])
                     self.arrowLocation = 0
 
-
             except functions.IsArrow as e:
                 if e.direction == "up":
                     self.arrowLocation += 1
@@ -253,6 +252,8 @@ interface.add('!S', functions.arcsin)
 interface.add('!C', functions.arccos)
 
 interface.add('t', functions.copy_from_stack)
+interface.add(' ', functions.CopyCurrent())
+interface.add('^J', functions.CopyCurrent())
 interface.add('u', functions.undo)
 interface.add('Q', functions.quit)
 interface.add('c', functions.copy_to_OS)

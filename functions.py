@@ -42,7 +42,6 @@ class RPNfunction:
         """ Run the function on the stack """
         self.handleArrow(stack, undostack, arrowLocation)
 
-
         if self.checkStackSize and len(stack) < self.args:
             raise StackToSmallError()
 
@@ -193,6 +192,7 @@ def raise_(ex):
     lambda"""
     raise ex
 
+
 def Pass(*args, **namedArgs):
     pass
 
@@ -220,3 +220,19 @@ arrow_up = RPNfunction(0, "Arrow up", lambda x: raise_(IsArrow("up")), display=F
 arrow_up.handleArrow = Pass
 arrow_down = RPNfunction(0, "Arrow down", lambda x: raise_(IsArrow("down")), display=False, undo=False)
 arrow_down.handleArrow = Pass
+
+
+class CopyCurrent(RPNfunction):
+    def __init__(self):
+        self.description = "Copy Current"
+        self.display = False  # Space and enter (^J) both look weird in the sidebar, so don't list
+
+    def run(self, stack, undostack, arrowLocation):
+        if len(stack) < 1:
+            raise StackToSmallError()
+
+        toAdd = [stack[-arrowLocation-1]]
+
+        # Undo should delete the item we just added, and add nothing
+        undostack.append(UndoItem(1, []))
+        stack.extend(toAdd)

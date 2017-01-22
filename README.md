@@ -27,6 +27,9 @@ You can move a marker up and down using the arrows. You can then use t to copy
 (take) that value to the end of the stack, or you can run any function to first
 copy the selected item to the end of the stack and then run the function.
 
+Use space or enter to copy either the last value or the value selected with the
+cursor.
+
 ## Licence
 GPL-3
 
