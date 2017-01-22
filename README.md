@@ -1,5 +1,5 @@
-# CRPN
-*A curses based calculator written in Python*
+# ERPN
+*An RPN  calculator written in Python*
 
 **This is not yet ready for use**
 Keyboard shortcuts, layout and other major interface changes will still be made
@@ -26,30 +26,6 @@ example "!m" means alt-m.
 You can move a marker up and down using the arrows. You can then use t to copy
 (take) that value to the end of the stack, or you can run any function to first
 copy the selected item to the end of the stack and then run the function.
-
-## Todo
-### Short term
- * Rethink all keyboard shortcuts
- * Add log window (like emacs has)
- * Add way more functions
- * Change display settings
- * Make real documentation
- * Add Redo functions
-
-### Longer term
- * Complex numbers
- * Multiple stacks, including the option to apply commands to more than one
-   stack at the same time
- * Save and load stacks
- * Variables
- * Functions
- * Custom key bindings
- * Customizable interface
- * Lists as objects
- * Reference (Stuff like common formulas)
- * GUI interface
- * Go back and edit history, redoing all the calculations that came after that
- * Units of measurement support
 
 ## Licence
 GPL-3
