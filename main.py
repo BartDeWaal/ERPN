@@ -260,7 +260,9 @@ interface.add('c', functions.copy_to_OS)
 interface.add('v', functions.paste_from_OS)
 
 interface.add('^C', functions.arrow_up)
+interface.add('k', functions.arrow_up)
 interface.add('^B', functions.arrow_down)
+interface.add('j', functions.arrow_down)
 
 
 def main(screen):
