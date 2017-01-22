@@ -140,7 +140,6 @@ def paste_function(args):
 
 
 # Basic functions
-delete = RPNfunction(1, "delete x", lambda x: [])
 switch2 = RPNfunction(2, "switch x, y", lambda x: [x[1], x[0]])
 
 addition = RPNfunction(2, "x+y", lambda x: [sum(x)], checkStackSize=False)
@@ -236,3 +235,35 @@ class CopyCurrent(RPNfunction):
         # Undo should delete the item we just added, and add nothing
         undostack.append(UndoItem(1, []))
         stack.extend(toAdd)
+
+
+class UndoDelete(UndoItem):
+    def __init__(self, position, value):
+        """ Undo a deletion action
+        When this undo is applied, value will be at position
+        position should be a non-negative integer, just like ArrowLocation"""
+        self.position = position
+        self.value = value
+
+    def apply(self, stack):
+        """ Apply the remembered undo action to indicated stack """
+        if self.position == 0:
+            stack.append(self.value)
+        else:
+            stack.insert(-self.position, self.value)
+
+    def __str__(self):
+        return "Undo: delete {} at position {}".format(self.value, self.position)
+
+
+class Delete(RPNfunction):
+    def __init__(self, display=True):
+        self.description = "delete x"
+        self.display = display
+
+    def run(self, stack, undostack, arrowLocation):
+        if len(stack) < 1:
+            raise StackToSmallError()
+
+        undoVal = stack.pop(-arrowLocation-1)
+        undostack.append(UndoDelete(arrowLocation, undoVal))

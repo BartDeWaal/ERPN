@@ -218,7 +218,7 @@ class Interface:
 
 interface = Interface()
 # See utils folder for script that helps figure out what each key does
-interface.add('x', functions.delete)
+interface.add('x', functions.Delete())
 interface.add('z', functions.switch2)
 interface.add('+', functions.addition)
 interface.add('a', functions.addition)
