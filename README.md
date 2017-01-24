@@ -31,6 +31,4 @@ Use space or enter to copy either the last value or the value selected with the
 cursor.
 
 ## Licence
-GPL-3
-
-pyperclip used under BSD licence
+GPLv3

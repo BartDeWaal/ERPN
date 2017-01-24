@@ -1,3 +1,11 @@
 [flake8]
 max-line-length = 120
-exclude = utils/pyperclip
+exclude =
+    .git,
+    venv,
+    .venv,
+    ENV,
+    .eggs,
+    eggs,
+    *.egg-info,
+    __pycache__,
