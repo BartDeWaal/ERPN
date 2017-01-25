@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
-# ERPN, a Curses based RPN calculator
+# ERPN, an RPN calculator
 # Copyright (C) 2017 Bart de Waal
 # This program is licenced under the GPL version 3, see Licence file for details
 
-import curses
+import urwid
 from collections import defaultdict
 
 from . import functions
-from . import cursesHelper
 from .buttonMappings import loadMappings
 from .domain import Reals
+from . import urwidHelper
 
 stack = []  # The stack as displayed to the unit
 undostack = []  # The stack of undo actions
@@ -17,13 +17,9 @@ undostack = []  # The stack of undo actions
 
 class Interface:
     functions = {}
-    entryBox = None      # Replace with a curses box for text entry
-    stackWindow = None
-    helpWindow = None
-    mainScreen = None
-    labelColumn = None
-
     arrowLocation = 0  # The location of the arrow selector
+    numberEntry = ""  # If we are currently entering a number, this will contain the entry up to now
+    error = None  # The currently displayed error
 
     def add(self, key, function):
         """ Add a entry to link a keyboard shortcut to a function """
@@ -32,16 +28,68 @@ class Interface:
             raise Exception("Already defined key {}".format(key))
         self.functions[key] = function
 
-    def run(self, key):
+    def enterNumber(self, key):
+        """ Enter an entry
+            It handles key (a string) as the start of the entry
+            Returns None if the number entry isn't done, or a key if it is """
+        # find out all the keys it's allowed to have
+        allowedKeys = "1234567890"
+
+        # '_' means '-' in this context if it is the first character, to allow
+        # users to enter negative numbers
+        if self.numberEntry == "" and key == '_':
+            allowedKeys += '-'  # we need to allow the first character
+            key = '-'
+
+        # We also allow a - after an e
+        if len(self.numberEntry) > 0 and self.numberEntry[-1] == 'e':
+            allowedKeys += '-'
+            # For consistency the user should be able to enter _ after an e too
+            if key == '_':
+                key = '-'
+
+        # allow decimalpoints if we don't have one yet, and it's not after the
+        # e in an engineering number
+        if 'e' not in self.numberEntry and '.' not in self.numberEntry:
+            allowedKeys += '.'
+
+        # allow e, unless:
+        # - there is already an e, don't allow 1e5e2
+        # - there is no digit yet, so don't allow -e4 or .e5
+        if 'e' not in self.numberEntry and any(c.isdigit() for c in self.numberEntry):
+            allowedKeys += 'e'
+
+        if key in allowedKeys:
+            self.numberEntry += key
+            return None
+        else:
+            try:
+                val = float(self.numberEntry)
+                if val not in Reals:
+                    # For now our calculator is only for numbers, stuff like "inf" isn't required
+                    raise ValueError
+                stack.append(val)
+            except ValueError:
+                self.setError("Could not decode value")
+            self.numberEntry = ""
+            return key
+
+
+    def takeKey(self, key):
         """ React to a pressed key """
 
-        if key in '1234567890._':
-            # if this is a number or starts with a space we want to
-            # let the user enter the whole line
-            self.clearError()
-            self.displayLineLabels(len(stack), True)
-            self.entry(key)
-            self.displayLineLabels(len(stack), False)
+        if len(self.numberEntry) > 0 or key in '1234567890._':
+            key = self.enterNumber(key)
+            self.displayStack()
+            # if the entry is done enterNumber will return the next key, which
+            # we need to apply to the stack
+            # The only exception we make is for the "copy numbers" buttons,
+            # sometimes I just press enter to finish entering a number
+            if (key is not None and
+                (key not in self.functions or
+                 not isinstance(self.functions[key], functions.CopyCurrent))):
+                        self.takeKey(key)
+            return
 
         if key in self.functions:
             try:
@@ -69,17 +117,6 @@ class Interface:
                 else:
                     self.setError("Nothing to undo")
 
-            except functions.IsCopyFromStack:
-                if self.arrowLocation == 0:
-                    c = self.getKey()
-                    try:
-                        addToStack(stack[lineLabelLookup(c)])
-                    except:
-                        self.setError("Could not lookup value")
-                else:
-                    addToStack(stack[-self.arrowLocation-1])
-                    self.arrowLocation = 0
-
             except functions.IsArrow as e:
                 if e.direction == "up":
                     self.arrowLocation += 1
@@ -88,32 +125,66 @@ class Interface:
                 self.checkArrowLocation()
 
             except functions.IsQuit:
-                exit()
+                raise urwid.ExitMainLoop()
 
             else:
                 # If the function applied and no new errors appeared we can clear the error
                 self.clearError()
 
-        self.displayStack(stack)
-        self.displayLineLabels(len(stack))
+        self.displayStack()
 
-    def entry(self, key):
-        """ Let the user enter a line, mainly for entering new numbers """
-        val, nextkey = cursesHelper.getEntry(self.entryBox, key)
-        try:
-            val = float(val)
-            if val not in Reals:
-                # For now our calculator is only for numbers, stuff like "inf" isn't required
-                raise ValueError
-            addToStack(val)
-            self.displayStack(stack)
-            self.run(nextkey)
-        except ValueError:
-            self.setError("Could not decode value")
+    def setError(self, error_text):
+        """ Display an error """
+        self.error = error_text
 
-    def helptext(self):
-        """ Generate the string for the help text in the sidebar.
-        The information in generated from the configuration """
+    def clearError(self):
+        """ Clear the error display """
+        self.error = None
+
+    def setupWindows(self):
+        """ Setup the different parts of the screen layout """
+        self.helpBox = self.getHelpBox()
+        helpfill = urwid.Filler(self.helpBox, 'top')
+
+        self.stackBox = self.getStackBox()
+        self.stackfill = urwidHelper.FillerWithMemory(self.stackBox, 'bottom')
+        self.displayStack()
+
+        self.root = urwid.Columns([self.stackfill, (23, helpfill)])
+
+    def getStackBox(self):
+        """ Display the stack in window. Supply the stack to display """
+        return urwid.Text("")
+
+    def displayStack(self):
+        lines = [""]
+
+        # Display the current entry at the bottom of the stack.
+        displayStack = stack
+        if self.numberEntry != "":
+            displayStack = displayStack + [self.numberEntry]
+
+        # If possible, limit the lines shown so you only see the bottom of the stack.
+        if self.stackfill.lastHeight is not None:
+            displayStack = displayStack[-self.stackfill.lastHeight+1:]
+
+        for i in range(len(displayStack)):
+            n = len(displayStack) - i - 1
+            arrow = "   "
+            if(n != 0 and n == self.arrowLocation):
+                arrow = ('arrow', " ->")
+            label = ('lineLabel', "{:>3}: ".format(lineLabel(n)))
+            number = "{}".format(displayStack[i])
+            lines.extend([arrow, label, number, "\n"])
+
+        if self.error is not None:
+            lines.append(('error', self.error))
+
+        self.stackBox.set_text(lines)
+
+    def getHelpBox(self):
+        """ Return a textbox containing the help string """
+        # First generate the strings
 
         # All items in the dicts are [] by default, so we can append to them
         # without checking if they exist
@@ -123,122 +194,27 @@ class Interface:
         for item in self.functions:
             items[self.functions[item]].append(item)
 
-        returnstrings = []
+        helpStrings = []
         for item in items:
             if item.display:
-                returnstrings.append(
-                        "{}: {}".format(', '.join(sorted(items[item])),
-                                        item.description))
-        returnstrings.sort()
-        return "\n".join(returnstrings)
+                newitem = "{}: {}".format(', '.join(sorted(items[item])),
+                                          item.description)
+                helpStrings.append(newitem)
 
-    def getKey(self):
-        """ Allow the interface to define how keys are recieved """
-        return cursesHelper.getKeyAlt(self.mainScreen)
-
-    def setError(self, error_text):
-        """ Display an error """
-        self.errorWindow.clear()
-        self.errorWindow.addstr(error_text, curses.color_pair(2))
-        self.errorWindow.refresh()
-
-    def clearError(self):
-        """ Clear the error display """
-        self.setError("")
-
-    def setupWindows(self, screen):
-        """ Setup the screen layout """
-        width = curses.COLS
-        height = curses.LINES
-
-        self.mainScreen = screen
-        curses.init_pair(1, curses.COLOR_WHITE, curses.COLOR_BLACK)
-        curses.init_pair(2, curses.COLOR_RED, curses.COLOR_BLACK)   # Used for warnings/Errors
-        curses.init_pair(3, curses.COLOR_CYAN, curses.COLOR_BLACK)  # Used for line labels
-        curses.init_pair(4, curses.COLOR_YELLOW, curses.COLOR_BLACK)  # Used for arrows
-
-        # We use four colums. From left to right:
-        # A left column. This includes the label numbers. Some day this may be used to display an arrow
-        # The stack column, with the main display
-        # A small spacer column
-        # And the hel column on th right
-        helpColumn = 21
-        leftColumn = 8
-        spacerColumn = 1
-        stackColumn = width - helpColumn - leftColumn - spacerColumn
-
-        self.labelColumn = curses.newwin(height, leftColumn, 0, 0)
-
-        x = leftColumn
-        self.stackWindow = curses.newwin(height-2, stackColumn, 0, x)
-        self.entryBox = curses.newwin(1, stackColumn, height-2, x)
-        self.errorWindow = curses.newwin(1, stackColumn, height-1, x)
-
-        x += stackColumn + spacerColumn
-        self.helpWindow = curses.newwin(height-2, helpColumn, 0, x)
-
-    def displayLineLabels(self, stacksize, enteringValue=False):
-        """ Display the labels to the left of the stack.
-        stacksize is the number of items on the stack.
-        While a value is being entered it should go down one to label the new
-        value as it is entered.  """
-        addAtEnd = ["", ""]  # Fill the last few spaces with this
-        if enteringValue:
-            stacksize += 1
-            addAtEnd = [""]
-
-        labels = ["   {:>3}:".format(lineLabel(i)) for i in range(stacksize)]
-
-        cursesHelper.displayFromBottom(self.labelColumn, addAtEnd + labels, curses.color_pair(3))
-
-        self.displayArrow()
-
-    def displayArrow(self):
-        """ Draw the arrow in the left column """
-        arrowLocation = self.arrowLocation
-        window = self.labelColumn
-        (y, x) = window.getmaxyx()
-
-        self.checkArrowLocation()
-
-        spacesNotUsed = 2  # Blank spots at the bottom of the pile that are not used
-        if arrowLocation != 0 and arrowLocation + spacesNotUsed < y:
-            window.addstr(y - arrowLocation - spacesNotUsed - 1, 0, "->", curses.color_pair(4))
-            window.refresh()
+        helpStrings.sort()
+        return urwid.Text('\n'.join(helpStrings))
 
     def checkArrowLocation(self):
         """ Ensure that the arrow is actually pointing at the stack """
         if self.arrowLocation < 0 or self.arrowLocation >= len(stack):
             self.arrowLocation = 0
 
-    def displayStack(self, stackObject):
-        """ Display the stack in window. Supply the stack to display """
-        lines = ["{}".format(x) for x in reversed(stackObject[-100:])]  # 100 is the maximum amount of lines I expect
-        cursesHelper.displayFromBottom(self.stackWindow, lines)
-
-
-
-
 interface = Interface()
 loadMappings(interface)
 
-def cursesMain(screen):
-    """ Main entrypoint, sets up screens etc. """
-    screen.clear()
-    screen.refresh()
-    interface.setupWindows(screen)
-    interface.displayStack(stack)
-    displayHelp(interface.helpWindow)
-    interface.displayLineLabels(len(stack))
-
-    while True:
-        c = interface.getKey()
-        interface.run(c)
-
-
 def lineLabel(n):
-    """ return how item n (numbered 0-indexed from the top of the stack) should
-    be labeled """
+    """ return how item n (numbered with 0 the top of the stack) should be
+    labeled """
     if n == 0:
         return 'x'
     if n == 1:
@@ -248,32 +224,17 @@ def lineLabel(n):
     return "{}".format(n-2)
 
 
-def lineLabelLookup(key):
-    """ Return the line from the stack (as negative index) to get to the stack
-    item. """
-    if key == 'x':
-        return -1
-    if key == 'y':
-        return -2
-    if key == 'z':
-        return -3
-    num = int(key)
-    if num < 1:
-        raise ValueError("number too low")
-    return -3-num
-
-
 def addToStack(item):
     stack.append(item)
     undostack.append(functions.UndoItem(1, []))
 
 
-def displayHelp(window):
-    """ Display the help messages in the sidebar """
-    window.clear()
-    window.addstr(0, 0, interface.helptext())
-    window.refresh()
-
-
 def main():
-    curses.wrapper(cursesMain)
+    interface.setupWindows()
+    palette = [('arrow', 'yellow', 'default'),
+               ('lineLabel', 'dark cyan', 'default'),
+               ('error', 'light red', 'default')]
+    loop = urwid.MainLoop(interface.root, palette,
+                          unhandled_input=interface.takeKey,
+                          handle_mouse=False)
+    loop.run()

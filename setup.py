@@ -1,14 +1,14 @@
 from setuptools import setup
 
 setup(name='erpn',
-      version='0.1',
+      version='0.2',
       description='An RPN Calculator',
       url='http://github.com/BartDeWaal/ERPN',
       author='Bart de Waal',
       author_email='bart@tuduft.nl',
       license='GPLv3',
       packages=['erpn'],
-      install_requires=['pyperclip'],
+      install_requires=['pyperclip', 'urwid'],
       entry_points={
           'console_scripts': [
               'erpn = erpn.main:main'
@@ -17,7 +17,7 @@ setup(name='erpn',
       keywords="rpn",
       classifiers=[
           'Development Status :: 4 - Beta',
-          'Environment :: Console :: Curses',
+          'Environment :: Console',
           'Intended Audience :: Science/Research',
           'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
           'Natural Language :: English',

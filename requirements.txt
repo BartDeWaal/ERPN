@@ -1,1 +1,2 @@
 pyperclip==1.5.27
+urwid==1.3.1
