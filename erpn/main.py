@@ -65,6 +65,7 @@ class Interface:
             try:
                 functions.AddItem(self.numberEntry).run(stack, undostack,
                                                         self.arrowLocation)
+                self.clearError()
             except ValueError:
                 self.setError("Could not decode value")
             self.numberEntry = ""
