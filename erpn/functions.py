@@ -180,10 +180,6 @@ factorial = RPNfunction(1, "factorial",
 gcd = RPNfunction(2, "GCD", lambda x: [math.gcd(round(x[0]), round(x[1]))],
                   [Integers > 0, Integers > 0])
 
-# constants
-e = RPNfunction(0, "e=2.71...", lambda x: [math.e])
-pi = RPNfunction(0, "pi=3.14...", lambda x: [math.pi])
-
 
 def raise_(ex):
     """I like to use exceptions as flow control, and I like to define functions
@@ -267,3 +263,25 @@ class Delete(RPNfunction):
 
         undoVal = stack.pop(-arrowLocation-1)
         undostack.append(UndoDelete(arrowLocation, undoVal))
+
+    def __str__(self):
+        return "Delete single item from stack"
+
+
+class AddItem(RPNfunction):
+    """ RPN function to add an item to the stack.
+    The __init__ function will check that the value is a float we can use """
+    def __init__(self, value, display=True, description=None):
+        value = float(value)
+        if value not in Reals:
+            raise ValueError
+        self.valueToAdd = value
+        if description is None:
+            self.description = "push {}".format(value)
+        else:
+            self.description = description
+        self.display = display
+
+    def run(self, stack, undostack, arrowLocation):
+        stack.append(self.valueToAdd)
+        undostack.append(UndoItem(1, []))

@@ -8,7 +8,6 @@ from collections import defaultdict
 
 from . import functions
 from .buttonMappings import loadMappings
-from .domain import Reals
 from . import urwidHelper
 
 stack = []  # The stack as displayed to the unit
@@ -64,16 +63,12 @@ class Interface:
             return None
         else:
             try:
-                val = float(self.numberEntry)
-                if val not in Reals:
-                    # For now our calculator is only for numbers, stuff like "inf" isn't required
-                    raise ValueError
-                stack.append(val)
+                functions.AddItem(self.numberEntry).run(stack, undostack,
+                                                        self.arrowLocation)
             except ValueError:
                 self.setError("Could not decode value")
             self.numberEntry = ""
             return key
-
 
     def takeKey(self, key):
         """ React to a pressed key """
@@ -209,8 +204,10 @@ class Interface:
         if self.arrowLocation < 0 or self.arrowLocation >= len(stack):
             self.arrowLocation = 0
 
+
 interface = Interface()
 loadMappings(interface)
+
 
 def lineLabel(n):
     """ return how item n (numbered with 0 the top of the stack) should be

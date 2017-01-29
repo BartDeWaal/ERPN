@@ -2,7 +2,9 @@
 # Copyright (C) 2017 Bart de Waal
 # This program is licenced under the GPLv3, see Licence file for details
 
+import math
 from . import functions
+
 
 def loadMappings(interface):
     """ Load all the mappings """
@@ -32,8 +34,9 @@ def loadMappings(interface):
     interface.add('!', functions.factorial)
     interface.add('`', functions.floor)
     interface.add('~', functions.ceil)
-    interface.add('meta e', functions.e)
-    interface.add('meta p', functions.pi)
+
+    interface.add('meta e', functions.AddItem(math.e, description="Push e=2.718.."))
+    interface.add('meta p', functions.AddItem(math.pi, description="Push pi=3.14.."))
 
     interface.add('meta t', functions.tan)
     interface.add('meta s', functions.sin)
