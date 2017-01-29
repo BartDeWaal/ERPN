@@ -48,6 +48,7 @@ def loadMappings(interface):
     interface.add(' ', functions.CopyCurrent(display=False))
     interface.add('enter', functions.CopyCurrent())
     interface.add('u', functions.undo)
+    interface.add('ctrl r', functions.redo)
     interface.add('Q', functions.quit)
     interface.add('c', functions.copy_to_OS)
     interface.add('v', functions.paste_from_OS)

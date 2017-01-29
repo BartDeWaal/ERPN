@@ -12,6 +12,7 @@ from . import urwidHelper
 
 stack = []  # The stack as displayed to the unit
 undostack = []  # The stack of undo actions
+redostack = []
 
 
 class Interface:
@@ -31,6 +32,8 @@ class Interface:
         """ Enter an entry
             It handles key (a string) as the start of the entry
             Returns None if the number entry isn't done, or a key if it is """
+        global redostack
+
         # find out all the keys it's allowed to have
         allowedKeys = "1234567890"
 
@@ -66,6 +69,7 @@ class Interface:
                 functions.AddItem(self.numberEntry).run(stack, undostack,
                                                         self.arrowLocation)
                 self.clearError()
+                redostack = []
             except ValueError:
                 self.setError("Could not decode value")
             self.numberEntry = ""
@@ -73,6 +77,7 @@ class Interface:
 
     def takeKey(self, key):
         """ React to a pressed key """
+        global redostack
 
         if len(self.numberEntry) > 0 or key in '1234567890._':
             key = self.enterNumber(key)
@@ -108,10 +113,19 @@ class Interface:
                 # Take the top action from the undostack and apply it to the
                 # stack
                 if len(undostack) > 0:
-                    undostack.pop().apply(stack)
+                    undo = undostack.pop()
+                    undo.apply(stack)
+                    redostack.append(undo.redo)
                     self.clearError()
                 else:
                     self.setError("Nothing to undo")
+
+            except functions.IsRedo:
+                if len(redostack) > 0:
+                    redo = redostack.pop()
+                    redo.run(stack, undostack, 0)
+                else:
+                    self.setError("Nothing to Redo")
 
             except functions.IsArrow as e:
                 if e.direction == "up":
@@ -126,6 +140,7 @@ class Interface:
             else:
                 # If the function applied and no new errors appeared we can clear the error
                 self.clearError()
+                redostack = []
 
         self.displayStack()
 

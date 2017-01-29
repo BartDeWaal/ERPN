@@ -54,7 +54,7 @@ class RPNfunction:
 
         if(self.undo):
             # Remember how many items we added and which ones we removed so we can undo
-            undostack.append(UndoItem(len(toAdd), functionArguments))
+            undostack.append(UndoItem(len(toAdd), functionArguments, self))
 
         if self.args > 0:
             del stack[-self.args:]
@@ -71,20 +71,22 @@ class RPNfunction:
 
     def handleArrow(self, stack, undostack, arrowLocation):
         if arrowLocation != 0:
-            stack.append(stack[-arrowLocation-1])
-            undostack.append(UndoItem(1, []))
+            value = stack[-arrowLocation-1]
+            AddItem(value).run(stack, undostack, 0)
 
     def __str__(self):
         return "RPN function, {}, {} args".format(self.description, self.args)
 
 
 class UndoItem:
-    def __init__(self, remove, add):
+    def __init__(self, remove, add, redo):
         """ An action to undo something
         remove: how many items this will remove
-        add: the list of items it will add """
+        add: the list of items it will add
+        redo: the RPNclass instance to redo this action. It is always run with ArrowLocation=0"""
         self.remove = remove
         self.add = add
+        self.redo = redo
 
     def apply(self, stack):
         """ Apply the remembered undo action to indicated stack """
@@ -193,6 +195,7 @@ def Pass(*args, **namedArgs):
 
 
 class IsUndo(Exception): pass  # noqa
+class IsRedo(Exception): pass  # noqa
 class IsQuit(Exception): pass  # noqa
 class IsCopyFromStack(Exception): pass  # noqa
 
@@ -206,6 +209,7 @@ class IsArrow(Exception):
 
 
 undo = RPNfunction(0, "undo", lambda x: raise_(IsUndo()))
+redo = RPNfunction(0, "redo", lambda x: raise_(IsRedo()))
 quit = RPNfunction(0, "quit", lambda x: raise_(IsQuit()))
 copy_from_stack = RPNfunction(1, "Copy from Stack", lambda x: raise_(IsCopyFromStack()))
 copy_to_OS = RPNfunction(1, "Copy", copy_function, undo=False)
@@ -226,11 +230,11 @@ class CopyCurrent(RPNfunction):
         if len(stack) < 1:
             raise StackToSmallError()
 
-        toAdd = [stack[-arrowLocation-1]]
+        toAdd = stack[-arrowLocation-1]
 
         # Undo should delete the item we just added, and add nothing
-        undostack.append(UndoItem(1, []))
-        stack.extend(toAdd)
+        undostack.append(UndoItem(1, [], AddItem(toAdd)))
+        stack.extend([toAdd])
 
 
 class UndoDelete(UndoItem):
@@ -240,6 +244,7 @@ class UndoDelete(UndoItem):
         position should be a non-negative integer, just like ArrowLocation"""
         self.position = position
         self.value = value
+        self.redo = Delete(deleteLocation=position)
 
     def apply(self, stack):
         """ Apply the remembered undo action to indicated stack """
@@ -253,13 +258,17 @@ class UndoDelete(UndoItem):
 
 
 class Delete(RPNfunction):
-    def __init__(self, display=True):
+    def __init__(self, display=True, deleteLocation=None):
         self.description = "delete x"
         self.display = display
+        self.deleteLocation = deleteLocation
 
     def run(self, stack, undostack, arrowLocation):
         if len(stack) < 1:
             raise StackToSmallError()
+
+        if self.deleteLocation is not None:
+            arrowLocation = self.deleteLocation
 
         undoVal = stack.pop(-arrowLocation-1)
         undostack.append(UndoDelete(arrowLocation, undoVal))
@@ -284,4 +293,4 @@ class AddItem(RPNfunction):
 
     def run(self, stack, undostack, arrowLocation):
         stack.append(self.valueToAdd)
-        undostack.append(UndoItem(1, []))
+        undostack.append(UndoItem(1, [], self))
