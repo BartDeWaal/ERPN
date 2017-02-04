@@ -57,3 +57,12 @@ def loadMappings(interface):
     interface.add('k', functions.arrow_up)
     interface.add('down', functions.arrow_down)
     interface.add('j', functions.arrow_down)
+
+    interface.add('D', functions.menu_display)
+
+    # Buttons for display menu
+    interface.add('c', functions.copy_to_OS, 'display')
+    interface.add('v', functions.paste_from_OS, 'display')
+    interface.add('D', functions.back, 'display')
+    interface.add('enter', functions.back, 'display')
+    interface.add('Q', functions.quit, 'display')

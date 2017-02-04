@@ -194,10 +194,12 @@ def Pass(*args, **namedArgs):
     pass
 
 
+class IsBack(Exception): pass  # noqa
 class IsUndo(Exception): pass  # noqa
 class IsRedo(Exception): pass  # noqa
 class IsQuit(Exception): pass  # noqa
 class IsCopyFromStack(Exception): pass  # noqa
+class EnterDisplayMenu(Exception): pass  # noqa
 
 
 class IsArrow(Exception):
@@ -211,9 +213,12 @@ class IsArrow(Exception):
 undo = RPNfunction(0, "undo", lambda x: raise_(IsUndo()))
 redo = RPNfunction(0, "redo", lambda x: raise_(IsRedo()))
 quit = RPNfunction(0, "quit", lambda x: raise_(IsQuit()))
+back = RPNfunction(0, "go back", lambda x: raise_(IsBack()))
+quit = RPNfunction(0, "quit", lambda x: raise_(IsQuit()))
 copy_from_stack = RPNfunction(1, "Copy from Stack", lambda x: raise_(IsCopyFromStack()))
 copy_to_OS = RPNfunction(1, "Copy", copy_function, undo=False)
 paste_from_OS = RPNfunction(0, "Paste", paste_function)
+menu_display = RPNfunction(0, "Change Display", lambda x: raise_(EnterDisplayMenu()))
 
 arrow_up = RPNfunction(0, "Arrow up", lambda x: raise_(IsArrow("up")), display=False, undo=False)
 arrow_up.handleArrow = Pass

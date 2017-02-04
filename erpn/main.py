@@ -16,17 +16,27 @@ redostack = []
 
 
 class Interface:
-    functions = {}
+    """ Container for all the interface (keybindings, display etc.) for the calulator """
+    # functions holds all the keybindings.  We support having multiple
+    # different menus with different items, so they all need to be stored
+    # seperataly. 'main' is the one loaded at startup.
+    functions = {'main': {}, 'display': {}}
+
+    # To make it easy to keep track of the current menu, we keep the latest set
+    # of button mappings in functions_stack[-1]. If we go back, we can just pop
+    # the top part.
+    functions_stack = [functions['main']]
+
     arrowLocation = 0  # The location of the arrow selector
     numberEntry = ""  # If we are currently entering a number, this will contain the entry up to now
     error = None  # The currently displayed error
 
-    def add(self, key, function):
+    def add(self, key, function, category='main'):
         """ Add a entry to link a keyboard shortcut to a function """
-        if key in self.functions:
+        if key in self.functions[category]:
             # You probably don't want to overwrite everything
-            raise Exception("Already defined key {}".format(key))
-        self.functions[key] = function
+            raise Exception("Already defined key {} for category {}".format(key, category))
+        self.functions[category][key] = function
 
     def enterNumber(self, key):
         """ Enter an entry
@@ -87,17 +97,17 @@ class Interface:
             # The only exception we make is for the "copy numbers" buttons,
             # sometimes I just press enter to finish entering a number
             if (key is not None and
-                (key not in self.functions or
-                 not isinstance(self.functions[key], functions.CopyCurrent))):
+                (key not in self.functions_stack[-1] or
+                 not isinstance(self.functions_stack[-1][key], functions.CopyCurrent))):
                         self.takeKey(key)
             return
 
-        if key in self.functions:
+        if key in self.functions_stack[-1]:
             try:
                 # This function uses exceptions to communicate if something is
                 # not a simple function on the stack
                 self.checkArrowLocation()
-                self.functions[key].run(stack, undostack, self.arrowLocation)
+                self.functions_stack[-1][key].run(stack, undostack, self.arrowLocation)
                 self.arrowLocation = 0
 
             except functions.StackToSmallError:
@@ -137,6 +147,17 @@ class Interface:
             except functions.IsQuit:
                 raise urwid.ExitMainLoop()
 
+            except functions.EnterDisplayMenu:
+                self.functions_stack.append(self.functions['display'])
+                self.displayHelp()
+
+            except functions.IsBack:
+                if len(self.functions_stack) > 0:
+                    self.functions_stack.pop()
+                    self.displayHelp()
+                else:
+                    self.setError("No menu to go back to")
+
             else:
                 # If the function applied and no new errors appeared we can clear the error
                 self.clearError()
@@ -154,7 +175,8 @@ class Interface:
 
     def setupWindows(self):
         """ Setup the different parts of the screen layout """
-        self.helpBox = self.getHelpBox()
+        self.helpBox = urwid.Text('')
+        self.displayHelp()
         helpfill = urwid.Filler(self.helpBox, 'top')
 
         self.stackBox = self.getStackBox()
@@ -193,8 +215,8 @@ class Interface:
 
         self.stackBox.set_text(lines)
 
-    def getHelpBox(self):
-        """ Return a textbox containing the help string """
+    def displayHelp(self):
+        """ Update the text in the self.helpBox """
         # First generate the strings
 
         # All items in the dicts are [] by default, so we can append to them
@@ -202,8 +224,8 @@ class Interface:
         items = defaultdict(lambda: [])
         # The keys in this dict will be the functions they are linked to.
 
-        for item in self.functions:
-            items[self.functions[item]].append(item)
+        for item in self.functions_stack[-1]:
+            items[self.functions_stack[-1][item]].append(item)
 
         helpStrings = []
         for item in items:
@@ -212,8 +234,8 @@ class Interface:
                                           item.description)
                 helpStrings.append(newitem)
 
-        helpStrings.sort()
-        return urwid.Text('\n'.join(helpStrings))
+        helpStrings.sort()  # this will do until I figure out a better way to sort the displayed strings
+        self.helpBox.set_text('\n'.join(helpStrings))
 
     def checkArrowLocation(self):
         """ Ensure that the arrow is actually pointing at the stack """
