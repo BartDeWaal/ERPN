@@ -4,6 +4,7 @@
 
 import math
 from . import functions
+from . import stackFormat
 
 
 def loadMappings(interface):
@@ -66,3 +67,26 @@ def loadMappings(interface):
     interface.add('D', functions.back, 'display')
     interface.add('enter', functions.back, 'display')
     interface.add('Q', functions.quit, 'display')
+
+    interface.add('+', functions.ChangeDisplayFunction("+", description='Increase precision'), 'display')
+    interface.add('-', functions.ChangeDisplayFunction("-", description='Decrease precision'), 'display')
+
+    interface.add('d',
+                  functions.ChangeDisplayFunction(stackFormat.OptionalExponent(),
+                                                  description='Default display'),
+                  'display')
+
+    interface.add('s',
+                  functions.ChangeDisplayFunction(stackFormat.UseExponent(),
+                                                  description='Scientific Format'),
+                  'display')
+
+    interface.add('e',
+                  functions.ChangeDisplayFunction(stackFormat.UseExponent(exponent_grouping=3),
+                                                  description='Engineering Format'),
+                  'display')
+
+    interface.add('p',
+                  functions.ChangeDisplayFunction(stackFormat.NoExponent(),
+                                                  description='No Exponent'),
+                  'display')

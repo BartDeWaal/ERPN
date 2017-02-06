@@ -15,6 +15,7 @@ class StackToSmallError(Exception):
 
 class DomainError(Exception):
     """ An argument is not defined on an argument """
+    pass
 
 
 class RPNfunction:
@@ -299,3 +300,24 @@ class AddItem(RPNfunction):
     def run(self, stack, undostack, arrowLocation):
         stack.append(self.valueToAdd)
         undostack.append(UndoItem(1, [], self))
+
+
+class ChangeDisplayFormat(Exception):
+    """ An exception to signal we want to change the display settings. It
+    carries the display settings it wants with it """
+    def __init__(self, adj_format, message="Change Display Format", *args):
+        """ adj_format can be + or - to change the precision, or a ValueFormatter """
+        self.adj_format = adj_format
+        super().__init__(message)
+
+
+class ChangeDisplayFunction(RPNfunction):
+    """ Raise an ChangeDisplayFormat exception to set the correct display value """
+    def __init__(self, adj_format, display=True, description=None):
+        """ adj_format can be '+' or '-' to change the precision, or a ValueFormatter """
+        self.adj_format = adj_format
+        self.description = description
+        self.display = display
+
+    def run(self, *args, **kwargs):
+        raise ChangeDisplayFormat(self.adj_format)

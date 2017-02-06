@@ -9,6 +9,7 @@ from collections import defaultdict
 from . import functions
 from .buttonMappings import loadMappings
 from . import urwidHelper
+from . import stackFormat
 
 stack = []  # The stack as displayed to the unit
 undostack = []  # The stack of undo actions
@@ -30,6 +31,8 @@ class Interface:
     arrowLocation = 0  # The location of the arrow selector
     numberEntry = ""  # If we are currently entering a number, this will contain the entry up to now
     error = None  # The currently displayed error
+
+    displayFormat = stackFormat.OptionalExponent(3)  # default display mode
 
     def add(self, key, function, category='main'):
         """ Add a entry to link a keyboard shortcut to a function """
@@ -158,6 +161,20 @@ class Interface:
                 else:
                     self.setError("No menu to go back to")
 
+            except functions.ChangeDisplayFormat as e:
+                if e.adj_format == '+':
+                    self.displayFormat.add_precision()
+                elif e.adj_format == '-':
+                    self.displayFormat.remove_precision()
+                elif isinstance(e.adj_format, stackFormat.ValueFormatter):
+                    # We want to use the format given by the exception, but we
+                    # want to keep the precision the user has already set.
+                    digits_after_decimal = self.displayFormat.digits_after_decimal
+                    self.displayFormat = e.adj_format
+                    self.displayFormat.digits_after_decimal = digits_after_decimal
+                else:
+                    self.setError("Unparsable format")
+
             else:
                 # If the function applied and no new errors appeared we can clear the error
                 self.clearError()
@@ -207,7 +224,7 @@ class Interface:
             if(n != 0 and n == self.arrowLocation):
                 arrow = ('arrow', " ->")
             label = ('lineLabel', "{:>3}: ".format(lineLabel(n)))
-            number = "{}".format(displayStack[i])
+            number = self.displayFormat(displayStack[i])
             lines.extend([arrow, label, number, "\n"])
 
         if self.error is not None:
