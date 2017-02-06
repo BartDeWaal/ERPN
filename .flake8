@@ -9,3 +9,4 @@ exclude =
     eggs,
     *.egg-info,
     __pycache__,
+    build
