@@ -13,7 +13,6 @@ loadMappings(interface)
 
 
 def main():
-    interface.setupWindows()
     palette = [('arrow', 'yellow', 'default'),
                ('lineLabel', 'dark cyan', 'default'),
                ('error', 'light red', 'default')]

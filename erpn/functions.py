@@ -140,8 +140,6 @@ def copy_function(args):
     return [x]
 
 
-
-
 # Basic functions
 switch2 = RPNfunction(2, "switch x, y", lambda x: [x[1], x[0]])
 
@@ -225,6 +223,7 @@ arrow_up.handleArrow = Pass
 arrow_down = RPNfunction(0, "Arrow down", lambda x: raise_(IsArrow("down")), display=False, undo=False)
 arrow_down.handleArrow = Pass
 
+
 class PasteFromOS(RPNfunction):
     """ Paste from OS, using pyperclip """
     description = "Paste"
@@ -241,6 +240,7 @@ class PasteFromOS(RPNfunction):
         self.checkToAdd([toAdd], "Unable to use clipboard value")
         undostack.append(UndoItem(1, [], AddItem(toAdd)))
         stack.extend([toAdd])
+
 
 class CopyCurrent(RPNfunction):
     def __init__(self, display=True):
