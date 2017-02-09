@@ -90,3 +90,5 @@ def loadMappings(interface):
                   functions.ChangeDisplayFunction(stackFormat.NoExponent(),
                                                   description='No Exponent'),
                   'display')
+
+    interface.displayHelp()
