@@ -52,7 +52,7 @@ def loadMappings(interface):
     interface.add('ctrl r', functions.redo)
     interface.add('Q', functions.quit)
     interface.add('c', functions.copy_to_OS)
-    interface.add('v', functions.paste_from_OS)
+    interface.add('v', functions.PasteFromOS())
 
     interface.add('up', functions.arrow_up)
     interface.add('k', functions.arrow_up)
@@ -63,7 +63,7 @@ def loadMappings(interface):
 
     # Buttons for display menu
     interface.add('c', functions.copy_to_OS, 'display')
-    interface.add('v', functions.paste_from_OS, 'display')
+    interface.add('v', functions.PasteFromOS(), 'display')
     interface.add('D', functions.back, 'display')
     interface.add('enter', functions.back, 'display')
     interface.add('Q', functions.quit, 'display')

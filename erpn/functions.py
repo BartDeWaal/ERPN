@@ -52,6 +52,7 @@ class RPNfunction:
         self.checkDomain(functionArguments)
 
         toAdd = self.function(functionArguments)
+        self.checkToAdd(toAdd, "Result is not a valid value")
 
         if(self.undo):
             # Remember how many items we added and which ones we removed so we can undo
@@ -61,6 +62,11 @@ class RPNfunction:
             del stack[-self.args:]
 
         stack.extend(toAdd)
+
+    def checkToAdd(self, toAdd, failMessage):
+        for item in toAdd:
+            if item not in Reals:
+                raise DomainError(failMessage)
 
     def checkDomain(self, arguments):
         if self.checkStackSize:
@@ -134,12 +140,6 @@ def copy_function(args):
     return [x]
 
 
-def paste_function(args):
-    """ Take value from OS clipboard """
-    try:
-        return([float(paste())])
-    except:
-        raise DomainError("Unable to use clipboard value")
 
 
 # Basic functions
@@ -218,7 +218,6 @@ back = RPNfunction(0, "go back", lambda x: raise_(IsBack()))
 quit = RPNfunction(0, "quit", lambda x: raise_(IsQuit()))
 copy_from_stack = RPNfunction(1, "Copy from Stack", lambda x: raise_(IsCopyFromStack()))
 copy_to_OS = RPNfunction(1, "Copy", copy_function, undo=False)
-paste_from_OS = RPNfunction(0, "Paste", paste_function)
 menu_display = RPNfunction(0, "Change Display", lambda x: raise_(EnterDisplayMenu()))
 
 arrow_up = RPNfunction(0, "Arrow up", lambda x: raise_(IsArrow("up")), display=False, undo=False)
@@ -226,6 +225,22 @@ arrow_up.handleArrow = Pass
 arrow_down = RPNfunction(0, "Arrow down", lambda x: raise_(IsArrow("down")), display=False, undo=False)
 arrow_down.handleArrow = Pass
 
+class PasteFromOS(RPNfunction):
+    """ Paste from OS, using pyperclip """
+    description = "Paste"
+
+    def __init__(self, display=True):
+        self.display = display
+
+    def run(self, stack, undostack, arrowLocation):
+        try:
+            toAdd = float(paste())
+        except:
+            raise DomainError("Unable to use clipboard value")
+
+        self.checkToAdd([toAdd], "Unable to use clipboard value")
+        undostack.append(UndoItem(1, [], AddItem(toAdd)))
+        stack.extend([toAdd])
 
 class CopyCurrent(RPNfunction):
     def __init__(self, display=True):
@@ -298,6 +313,7 @@ class AddItem(RPNfunction):
         self.display = display
 
     def run(self, stack, undostack, arrowLocation):
+        self.checkToAdd([self.valueToAdd], "Unable to add value")
         stack.append(self.valueToAdd)
         undostack.append(UndoItem(1, [], self))
 
