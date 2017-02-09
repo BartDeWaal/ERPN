@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(name='erpn',
-      version='0.2',
+      version='0.3',
       description='An RPN Calculator',
       url='http://github.com/BartDeWaal/ERPN',
       author='Bart de Waal',
