@@ -78,6 +78,9 @@ pointing at without removing what the pointer is pointing at.
 
 If there is nothing in the stack, it will return a default value of 0.
 
+#### Switch 2
+Bound to `z` and tab. Swaps x and y.
+
 ## Development Setup on Linux
 Clone the repository into a directory.
 ```bash

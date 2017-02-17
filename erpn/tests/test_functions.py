@@ -41,5 +41,13 @@ class AdditionTest(FunctionTest):
                                   arrow_location=2, undo_length=2)
 
 
+class Switch2Test(FunctionTest):
+    function = f.switch2
+
+    def test_switch2(self):
+        self.compare_input_result(initial_stack=[1.0, 2.0, 3.0],
+                                  result_stack=[1.0, 3.0, 2.0])
+
+
 if __name__ == '__main__':
     unittest.main()
