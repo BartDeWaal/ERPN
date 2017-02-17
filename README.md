@@ -69,6 +69,15 @@ exponent is always a multiple of 3. So for example `100e6`.
 
 You can change the precision usin `+` and `-`.
 
+### Functions
+#### Addition
+Bound to `+` and `a`. Adds x and y.
+
+If the arrow is pointing at something, adds x and whatever the pointer is
+pointing at without removing what the pointer is pointing at.
+
+If there is nothing in the stack, it will return a default value of 0.
+
 ## Development Setup on Linux
 Clone the repository into a directory.
 ```bash
