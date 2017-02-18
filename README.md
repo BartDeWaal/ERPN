@@ -78,6 +78,11 @@ pointing at without removing what the pointer is pointing at.
 
 If there is nothing in the stack, it will return a default value of 0.
 
+#### Delete
+Bound to `x`. Removes item x from the stack.
+
+If the arrow is pointing at something, delete that instead of item x.
+
 #### Switch 2
 Bound to `z` and tab. Swaps x and y.
 

@@ -49,5 +49,18 @@ class Switch2Test(FunctionTest):
                                   result_stack=[1.0, 3.0, 2.0])
 
 
+class DeleteTest(FunctionTest):
+    function = f.Delete()
+
+    def test_delete(self):
+        self.compare_input_result(initial_stack=[1.0, 2.0, 3.0],
+                                  result_stack=[1.0, 2.0])
+
+    def test_delete_arrow(self):
+        self.compare_input_result(initial_stack=[1.0, 2.0, 3.0, 4.0],
+                                  result_stack=[1.0, 3.0, 4.0],
+                                  arrow_location=2)
+
+
 if __name__ == '__main__':
     unittest.main()
