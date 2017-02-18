@@ -62,5 +62,18 @@ class DeleteTest(FunctionTest):
                                   arrow_location=2)
 
 
+class SubtractTest(FunctionTest):
+    function = f.subtract
+
+    def test_subtract(self):
+        self.compare_input_result(initial_stack=[2.0, 3.0],
+                                  result_stack=[-1.0])
+
+    def test_subtraction_arrow(self):
+        self.compare_input_result(initial_stack=[100.0, 10.0, 1.0],
+                                  result_stack=[100.0, 10.0, -99.0],
+                                  arrow_location=2, undo_length=2)
+
+
 if __name__ == '__main__':
     unittest.main()
