@@ -83,6 +83,15 @@ Bound to `x`. Removes item x from the stack.
 
 If the arrow is pointing at something, delete that instead of item x.
 
+#### Divide
+Bound to `/`. Calculates y/x.
+
+If the arrow is pointing at something, divides x by whatever the pointer is
+pointing at without removing what the pointer is pointing at.
+
+Dividing by 0 will result in an error, values like `inf` are not supported by
+erpn.
+
 #### Multiply
 Bound to `*`. Calculates x*y.
 

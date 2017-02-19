@@ -74,6 +74,7 @@ class SubtractTest(FunctionTest):
                                   result_stack=[100.0, 10.0, -99.0],
                                   arrow_location=2, undo_length=2)
 
+
 class MultiplyTest(FunctionTest):
     function = f.multiply
 
@@ -93,6 +94,20 @@ class MultiplyTest(FunctionTest):
     def test_multiply_no_argument(self):
         self.compare_input_result(initial_stack=[],
                                   result_stack=[1.0])
+
+
+class DivideTest(FunctionTest):
+    function = f.divide
+
+    def test_divide(self):
+        self.compare_input_result(initial_stack=[3.0, 2.0],
+                                  result_stack=[1.5])
+
+    def test_divide_arrow(self):
+        self.compare_input_result(initial_stack=[100.0, 10.0, 13.0],
+                                  result_stack=[100.0, 10.0, 0.13],
+                                  arrow_location=2, undo_length=2)
+
 
 if __name__ == '__main__':
     unittest.main()
