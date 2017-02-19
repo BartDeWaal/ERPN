@@ -130,5 +130,31 @@ class ExponentTest(FunctionTest):
                                   arrow_location=2, undo_length=2)
 
 
+class SquareTest(FunctionTest):
+    function = f.square
+
+    def test_square(self):
+        self.compare_input_result(initial_stack=[5.0],
+                                  result_stack=[25.0])
+
+    def test_square_arrow(self):
+        self.compare_input_result(initial_stack=[100.0, 10.0, 13.0],
+                                  result_stack=[100.0, 10.0, 13.0, 10000.0],
+                                  arrow_location=2, undo_length=2)
+
+
+class SquareTest(FunctionTest):
+    function = f.sqrt
+
+    def test_square(self):
+        self.compare_input_result(initial_stack=[25.0],
+                                  result_stack=[5.0])
+
+    def test_square_arrow(self):
+        self.compare_input_result(initial_stack=[100.0, 10.0, 13.0],
+                                  result_stack=[100.0, 10.0, 13.0, 10.0],
+                                  arrow_location=2, undo_length=2)
+
+
 if __name__ == '__main__':
     unittest.main()

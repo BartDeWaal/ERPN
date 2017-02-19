@@ -95,6 +95,12 @@ Bound to `*`. Calculates x*y.
 
 If there is nothing in the stack, it will return a default value of 1.0.
 
+#### Square
+Bound to `s`. Calculates x*x.
+
+#### Square root
+Bound to `S`. Calculates sqrt(x).
+
 #### Subtract
 Bound to `-`. Calculates y-x.
 
