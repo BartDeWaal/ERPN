@@ -71,7 +71,7 @@ You can change the precision usin `+` and `-`.
 
 ### Functions
 #### Addition
-Bound to `+` and `a`. Calculates x+y.
+Bound to `+`. Calculates x+y.
 
 If the arrow is pointing at something, adds x and whatever the pointer is
 pointing at without removing what the pointer is pointing at.
@@ -84,13 +84,13 @@ Bound to `x`. Removes item x from the stack.
 If the arrow is pointing at something, delete that instead of item x.
 
 #### Subtract
-Bound to `-` and `s`. Calculates y-x.
+Bound to `-`. Calculates y-x.
 
 If the arrow is pointing at something, subtracts whatever the pointer is
 pointing at from x without removing what the pointer is pointing at.
 
 #### Switch 2
-Bound to `z` and tab. Swaps x and y.
+Bound to tab. Swaps x and y.
 
 ## Development Setup on Linux
 Clone the repository into a directory.
