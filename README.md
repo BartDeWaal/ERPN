@@ -87,6 +87,9 @@ Bound to `/`. Calculates y/x.
 Dividing by 0 will result in an error, values like `inf` are not supported by
 erpn.
 
+#### Exponent
+Bound to `p` (p for power). Calculates y^x.
+
 #### Multiply
 Bound to `*`. Calculates x*y.
 

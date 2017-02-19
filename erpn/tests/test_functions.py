@@ -109,5 +109,26 @@ class DivideTest(FunctionTest):
                                   arrow_location=2, undo_length=2)
 
 
+class ExponentTest(FunctionTest):
+    function = f.exponent
+
+    def test_exponent(self):
+        self.compare_input_result(initial_stack=[3.0, 2.0],
+                                  result_stack=[9.0])
+
+    def test_exponent_fractional(self):
+        self.compare_input_result(initial_stack=[4.0, 0.5],
+                                  result_stack=[2.0])
+
+    def test_exponent_negative(self):
+        self.compare_input_result(initial_stack=[5.0, -1.0],
+                                  result_stack=[0.2])
+
+    def test_exponent_arrow(self):
+        self.compare_input_result(initial_stack=[3.0, 10.0, 2.0],
+                                  result_stack=[3.0, 10.0, 8.0],
+                                  arrow_location=2, undo_length=2)
+
+
 if __name__ == '__main__':
     unittest.main()
