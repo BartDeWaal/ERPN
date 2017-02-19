@@ -43,9 +43,10 @@ that key "Alt" instead.
 
 You can move a marker up and down using the arrows (or the `j` and `k` keys).
 You can then use `enter` or space to copy that value to the end of the stack,
-or you can run any function to first copy the selected item to the end of the
-stack and then run the function. With `x` you can remove the item from the
-stack.
+or you can run most functions to first copy the selected item to the end of the
+stack and then run the function.
+
+With `x` you can remove the item from the stack.
 
 `meta p` and `meta e` are used to enter pi (3.14...) and e (eulers constant,
 2.718...) onto the stack.
@@ -73,9 +74,6 @@ You can change the precision usin `+` and `-`.
 #### Addition
 Bound to `+`. Calculates x+y.
 
-If the arrow is pointing at something, adds x and whatever the pointer is
-pointing at without removing what the pointer is pointing at.
-
 If there is nothing in the stack, it will return a default value of 0.
 
 #### Delete
@@ -86,25 +84,16 @@ If the arrow is pointing at something, delete that instead of item x.
 #### Divide
 Bound to `/`. Calculates y/x.
 
-If the arrow is pointing at something, divides x by whatever the pointer is
-pointing at without removing what the pointer is pointing at.
-
 Dividing by 0 will result in an error, values like `inf` are not supported by
 erpn.
 
 #### Multiply
 Bound to `*`. Calculates x*y.
 
-If the arrow is pointing at something, multiplies x and whatever the pointer is
-pointing at without removing what the pointer is pointing at.
-
 If there is nothing in the stack, it will return a default value of 1.0.
 
 #### Subtract
 Bound to `-`. Calculates y-x.
-
-If the arrow is pointing at something, subtracts whatever the pointer is
-pointing at from x without removing what the pointer is pointing at.
 
 #### Switch 2
 Bound to tab. Swaps x and y.
