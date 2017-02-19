@@ -83,6 +83,14 @@ Bound to `x`. Removes item x from the stack.
 
 If the arrow is pointing at something, delete that instead of item x.
 
+#### Multiply
+Bound to `*`. Calculates x*y.
+
+If the arrow is pointing at something, multiplies x and whatever the pointer is
+pointing at without removing what the pointer is pointing at.
+
+If there is nothing in the stack, it will return a default value of 1.0.
+
 #### Subtract
 Bound to `-`. Calculates y-x.
 

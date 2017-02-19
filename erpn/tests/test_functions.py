@@ -74,6 +74,25 @@ class SubtractTest(FunctionTest):
                                   result_stack=[100.0, 10.0, -99.0],
                                   arrow_location=2, undo_length=2)
 
+class MultiplyTest(FunctionTest):
+    function = f.multiply
+
+    def test_multiply(self):
+        self.compare_input_result(initial_stack=[-2.0, 3.0],
+                                  result_stack=[-6.0])
+
+    def test_multiply_arrow(self):
+        self.compare_input_result(initial_stack=[100.0, 10.0, 13.0],
+                                  result_stack=[100.0, 10.0, 1300.0],
+                                  arrow_location=2, undo_length=2)
+
+    def test_multiply_one_argument(self):
+        self.compare_input_result(initial_stack=[3.0],
+                                  result_stack=[3.0])
+
+    def test_multiply_no_argument(self):
+        self.compare_input_result(initial_stack=[],
+                                  result_stack=[1.0])
 
 if __name__ == '__main__':
     unittest.main()
