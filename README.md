@@ -36,7 +36,7 @@ To start number entry, simply start entering it using `0`-`9` or `.`.
 To enter a negative number, you can start entry with an underscore (`_`). This
 will be converted to a "-" in the interface.
 
-You can enter a number with an exponent. So for example
+You can enter a number with an exponent. So for example `0.1e-4`.
 
 Some of the keys in the sidebar as listed "meta" something. Some people call
 that key "Alt" instead.
@@ -45,8 +45,6 @@ You can move a marker up and down using the arrows (or the `j` and `k` keys).
 You can then use `enter` or space to copy that value to the end of the stack,
 or you can run most functions to first copy the selected item to the end of the
 stack and then run the function.
-
-With `x` you can remove the item from the stack.
 
 `meta p` and `meta e` are used to enter pi (3.14...) and e (eulers constant,
 2.718...) onto the stack.
