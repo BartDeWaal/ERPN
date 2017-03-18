@@ -29,7 +29,6 @@ def main():
         print("erpn {}\n{}".format(version, website))
         return
 
-
     palette = [('arrow', 'yellow', 'default'),
                ('lineLabel', 'dark cyan', 'default'),
                ('error', 'light red', 'default')]

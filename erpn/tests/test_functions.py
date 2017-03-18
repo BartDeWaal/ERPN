@@ -156,5 +156,13 @@ class SquareTest(FunctionTest):
                                   arrow_location=2, undo_length=2)
 
 
+class AddItemTest(FunctionTest):
+    function = f.AddItem(4.0, description="Push 4.0")
+
+    def test_addItem(self):
+        self.compare_input_result(initial_stack=[],
+                                  result_stack=[4.0])
+
+
 if __name__ == '__main__':
     unittest.main()
