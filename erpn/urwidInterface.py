@@ -49,17 +49,17 @@ class Interface:
         global redostack
 
         # find out all the keys it's allowed to have
-        allowedKeys = "1234567890"
+        allowedKeys = list("1234567890")
 
         # '_' means '-' in this context if it is the first character, to allow
         # users to enter negative numbers
         if self.numberEntry == "" and key == '_':
-            allowedKeys += '-'  # we need to allow the first character
+            allowedKeys += ['-']  # we need to allow the first character
             key = '-'
 
         # We also allow a - after an e
         if len(self.numberEntry) > 0 and self.numberEntry[-1] == 'e':
-            allowedKeys += '-'
+            allowedKeys += ['-']
             # For consistency the user should be able to enter _ after an e too
             if key == '_':
                 key = '-'
@@ -67,25 +67,35 @@ class Interface:
         # allow decimalpoints if we don't have one yet, and it's not after the
         # e in an engineering number
         if 'e' not in self.numberEntry and '.' not in self.numberEntry:
-            allowedKeys += '.'
+            allowedKeys += ['.']
 
         # allow e, unless:
         # - there is already an e, don't allow 1e5e2
         # - there is no digit yet, so don't allow -e4 or .e5
         if 'e' not in self.numberEntry and any(c.isdigit() for c in self.numberEntry):
-            allowedKeys += 'e'
+            allowedKeys += ['e']
+
+        # if there is more than one character already, we can backspace
+        if len(self.numberEntry) > 0:
+            allowedKeys += ['backspace']
 
         if key in allowedKeys:
-            self.numberEntry += key
+            if key == 'backspace':
+                self.numberEntry = self.numberEntry[:-1]
+            else:
+                self.numberEntry += key
             return None
         else:
-            try:
-                functions.AddItem(self.numberEntry).run(stack, undostack,
-                                                        self.arrowLocation)
-                self.clearError()
-                redostack = []
-            except ValueError:
-                self.setError("Could not decode value")
+            if len(self.numberEntry) > 0:
+                # Decode what the user typed in and add it to the stack
+                try:
+                    functions.AddItem(self.numberEntry).run(stack, undostack,
+                                                            self.arrowLocation)
+                    self.clearError()
+                    redostack = []
+                except ValueError:
+                    self.setError("Could not decode value")
+
             self.numberEntry = ""
             return key
 
