@@ -4,6 +4,7 @@
 # This program is licenced under the GPL version three, see Licence file for details
 
 import unittest
+import math
 import erpn.functions as f
 
 
@@ -143,7 +144,7 @@ class SquareTest(FunctionTest):
                                   arrow_location=2, undo_length=2)
 
 
-class SquareTest(FunctionTest):
+class SquareRootTest(FunctionTest):
     function = f.sqrt
 
     def test_square(self):
@@ -162,6 +163,32 @@ class AddItemTest(FunctionTest):
     def test_addItem(self):
         self.compare_input_result(initial_stack=[],
                                   result_stack=[4.0])
+
+
+class PowerTenTest(FunctionTest):
+    function = f.power_10
+
+    def test_power10(self):
+        self.compare_input_result(initial_stack=[2.0],
+                                  result_stack=[100.0])
+
+    def test_power10_arrow(self):
+        self.compare_input_result(initial_stack=[3.0, 4.0],
+                                  result_stack=[3.0, 4.0, 1000.0],
+                                  arrow_location=1, undo_length=2)
+
+
+class PowerETest(FunctionTest):
+    function = f.power_e
+
+    def test_power10(self):
+        self.compare_input_result(initial_stack=[2.0],
+                                  result_stack=[7.389056098930650227230427460575007813180315570551847324087])
+
+    def test_power10_arrow(self):
+        self.compare_input_result(initial_stack=[1.0, 4.0],
+                                  result_stack=[1.0, 4.0, math.e],
+                                  arrow_location=1, undo_length=2)
 
 
 if __name__ == '__main__':

@@ -93,6 +93,12 @@ Bound to `*`. Calculates x*y.
 
 If there is nothing in the stack, it will return a default value of 1.0.
 
+#### Power of 10
+Bound to `e` (e as used in scientific number notation). Calulates 10^x.
+
+#### Power of 10
+Bound to `E`. Calulates e^x, where e is eulers constant (approx. 2.718).
+
 #### Square
 Bound to `s`. Calculates x*x.
 
