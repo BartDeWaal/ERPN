@@ -179,7 +179,7 @@ factorial = RPNfunction(1, "factorial",
                         lambda x: [math.factorial(round(x[0]))],
                         [Integers >= 0])
 gcd = RPNfunction(2, "GCD", lambda x: [math.gcd(round(x[0]), round(x[1]))],
-                  [Integers > 0, Integers > 0])
+                  [Integers, Integers])
 
 
 def raise_(ex):

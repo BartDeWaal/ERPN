@@ -88,6 +88,13 @@ erpn.
 #### Exponent
 Bound to `p` (p for power). Calculates y^x.
 
+#### GCD (Greatest common divisor)
+Bound to `#`. Calculates the largest integer divisor of both x and y.
+
+For example, the GCD of 8 and 12 is 4.
+
+Is only defined on integer values.
+
 #### Logaritm (base 10)
 Bound to `l`. Calculates the 10-log of x.
 

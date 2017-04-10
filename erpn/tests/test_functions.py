@@ -302,5 +302,20 @@ class ModulusTest(FunctionTest):
                                   result_stack=[-1.5])
 
 
+class GcdTest(FunctionTest):
+    function = f.gcd
+
+    def test_gcd(self):
+        self.compare_input_result(initial_stack=[4.0, 12.0],
+                                  result_stack=[4.0])
+        self.compare_input_result(initial_stack=[-3.0, 12.0],
+                                  result_stack=[3.0])
+
+    def test_gcd_arrow(self):
+        self.compare_input_result(initial_stack=[10.0, 4.0, 25.0],
+                                  result_stack=[10.0, 4.0, 5.0],
+                                  arrow_location=2, undo_length=2)
+
+
 if __name__ == '__main__':
     unittest.main()
