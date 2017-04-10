@@ -269,5 +269,38 @@ class AdditiveInverseTest(FunctionTest):
                                   arrow_location=1, undo_length=2)
 
 
+class ModulusTest(FunctionTest):
+    function = f.modulo
+
+    def test_modulo(self):
+        self.compare_input_result(initial_stack=[15.0, 7.0],
+                                  result_stack=[1.0])
+
+    def test_modulo_arrow(self):
+        self.compare_input_result(initial_stack=[5.0, 23.0],
+                                  result_stack=[5.0, 3.0],
+                                  arrow_location=1, undo_length=2)
+
+    def test_modulo_fraction(self):
+        self.compare_input_result(initial_stack=[4.0, 2.5],
+                                  result_stack=[1.5])
+
+    def test_modulo_negative(self):
+        self.compare_input_result(initial_stack=[-15.0, 7.0],
+                                  result_stack=[6.0])
+        self.compare_input_result(initial_stack=[23.0, -5.0],
+                                  result_stack=[-2.0])
+        self.compare_input_result(initial_stack=[-15.0, -7.0],
+                                  result_stack=[-1.0])
+
+    def test_modulo_negative_fraction(self):
+        self.compare_input_result(initial_stack=[-1.0, 2.5],
+                                  result_stack=[1.5])
+        self.compare_input_result(initial_stack=[4.0, -2.5],
+                                  result_stack=[-1.0])
+        self.compare_input_result(initial_stack=[-4.0, -2.5],
+                                  result_stack=[-1.5])
+
+
 if __name__ == '__main__':
     unittest.main()

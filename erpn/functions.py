@@ -160,7 +160,7 @@ ln = RPNfunction(1, "ln", lambda x: [math.log(x[0])], [Reals > 0])
 mult_inverse = RPNfunction(1, "1/x", lambda x: [1/x[0]], [Reals - {0}])
 add_inverse = RPNfunction(1, "-x", lambda x: [-x[0]])
 
-modulo = RPNfunction(2, "y mod x", lambda x: [math.fmod(x[0], x[1])], [Reals - {0}, Reals])
+modulo = RPNfunction(2, "y mod x", lambda x: [x[0] % x[1]], [Reals - {0}, Reals])
 
 sin = RPNfunction(1, "sin x (rad)", lambda x: [math.sin(x[0])])
 cos = RPNfunction(1, "cos x (rad)", lambda x: [math.cos(x[0])])

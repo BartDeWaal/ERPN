@@ -94,6 +94,16 @@ Bound to `l`. Calculates the 10-log of x.
 #### Logaritm (Natural)
 Bound to `L`. Calculates the natural logarithm of x.
 
+#### Modulo
+Bound to `%`. Calculates y mod x.
+
+This also supports fractional modulo.
+
+The sign of the result is the sign of x. So for example `-1 mod 2 = 1`, and
+`1 mod -2 = -1`.
+
+When used with the arrow, it calculates x mod arrow value.
+
 #### Multiply
 Bound to `*`. Calculates x*y.
 
