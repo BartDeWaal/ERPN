@@ -88,6 +88,12 @@ erpn.
 #### Exponent
 Bound to `p` (p for power). Calculates y^x.
 
+#### Logaritm (base 10)
+Bound to `l`. Calculates the 10-log of x.
+
+#### Logaritm (Natural)
+Bound to `L`. Calculates the natural logarithm of x.
+
 #### Multiply
 Bound to `*`. Calculates x*y.
 
@@ -96,7 +102,7 @@ If there is nothing in the stack, it will return a default value of 1.0.
 #### Power of 10
 Bound to `e` (e as used in scientific number notation). Calulates 10^x.
 
-#### Power of 10
+#### Power of e
 Bound to `E`. Calulates e^x, where e is eulers constant (approx. 2.718).
 
 #### Square

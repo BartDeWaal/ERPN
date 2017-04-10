@@ -191,5 +191,49 @@ class PowerETest(FunctionTest):
                                   arrow_location=1, undo_length=2)
 
 
+class LnTest(FunctionTest):
+    function = f.ln
+
+    def test_ln_1(self):
+        self.compare_input_result(initial_stack=[1.0],
+                                  result_stack=[0.0])
+
+    def test_ln_e(self):
+        self.compare_input_result(initial_stack=[math.e],
+                                  result_stack=[1.0])
+
+    def test_ln_e_inv(self):
+        self.compare_input_result(initial_stack=[1/math.e],
+                                  result_stack=[-1.0])
+
+    def test_ln_arrow(self):
+        self.compare_input_result(initial_stack=[1.0, 4.0],
+                                  result_stack=[1.0, 4.0, 0.0],
+                                  arrow_location=1, undo_length=2)
+
+
+class LogTest(FunctionTest):
+    """ Test Log base 10 """
+
+    function = f.log10
+
+    def test_log_1(self):
+        self.compare_input_result(initial_stack=[1.0],
+                                  result_stack=[0.0])
+
+    def test_log_10(self):
+        self.compare_input_result(initial_stack=[10],
+                                  result_stack=[1.0])
+
+    def test_log_0_1(self):
+        self.compare_input_result(initial_stack=[0.1],
+                                  result_stack=[-1.0])
+
+    def test_log_arrow(self):
+        self.compare_input_result(initial_stack=[1.0, 4.0],
+                                  result_stack=[1.0, 4.0, 0.0],
+                                  arrow_location=1, undo_length=2)
+
+
 if __name__ == '__main__':
     unittest.main()
