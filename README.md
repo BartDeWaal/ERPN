@@ -99,6 +99,12 @@ Bound to `*`. Calculates x*y.
 
 If there is nothing in the stack, it will return a default value of 1.0.
 
+#### Negative (additive inversion)
+Bound to `i` (for invert). Calculates 0-x.
+
+#### Invert (multiplicative)
+Bound to `I`. Calculates 1/x.
+
 #### Power of 10
 Bound to `e` (e as used in scientific number notation). Calulates 10^x.
 

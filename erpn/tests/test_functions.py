@@ -235,5 +235,39 @@ class LogTest(FunctionTest):
                                   arrow_location=1, undo_length=2)
 
 
+class MultiplicativeInverseTest(FunctionTest):
+    function = f.mult_inverse
+
+    def test_multiplicative_inverse(self):
+        self.compare_input_result(initial_stack=[0.1],
+                                  result_stack=[10.0])
+        self.compare_input_result(initial_stack=[10.0],
+                                  result_stack=[0.1])
+        self.compare_input_result(initial_stack=[1.0],
+                                  result_stack=[1.0])
+
+    def test_multiplicative_inverse_arrow(self):
+        self.compare_input_result(initial_stack=[100.0, 4.0],
+                                  result_stack=[100.0, 4.0, 0.01],
+                                  arrow_location=1, undo_length=2)
+
+
+class AdditiveInverseTest(FunctionTest):
+    function = f.add_inverse
+
+    def test_additive_inverse(self):
+        self.compare_input_result(initial_stack=[1.0],
+                                  result_stack=[-1.0])
+        self.compare_input_result(initial_stack=[-1.0],
+                                  result_stack=[1.0])
+        self.compare_input_result(initial_stack=[0.0],
+                                  result_stack=[0.0])
+
+    def test_additive_inverse_arrow(self):
+        self.compare_input_result(initial_stack=[100.0, 4.0],
+                                  result_stack=[100.0, 4.0, -100.0],
+                                  arrow_location=1, undo_length=2)
+
+
 if __name__ == '__main__':
     unittest.main()
