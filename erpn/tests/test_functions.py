@@ -317,5 +317,20 @@ class GcdTest(FunctionTest):
                                   arrow_location=2, undo_length=2)
 
 
+class FactorialTest(FunctionTest):
+    function = f.factorial
+
+    def test_factorial(self):
+        self.compare_input_result(initial_stack=[4.0],
+                                  result_stack=[24.0])
+        self.compare_input_result(initial_stack=[0.0],
+                                  result_stack=[1.0])
+
+    def test_factorial_arrow(self):
+        self.compare_input_result(initial_stack=[10.0, 4.0, 25.0],
+                                  result_stack=[10.0, 4.0, 25.0, 3628800.0],
+                                  arrow_location=2, undo_length=2)
+
+
 if __name__ == '__main__':
     unittest.main()

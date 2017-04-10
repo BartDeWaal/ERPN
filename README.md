@@ -88,6 +88,9 @@ erpn.
 #### Exponent
 Bound to `p` (p for power). Calculates y^x.
 
+#### Factorial
+Bound to `!`. Calculates x!, i.e. x*(x-1)*(x-2)*...*2*1.
+
 #### GCD (Greatest common divisor)
 Bound to `#`. Calculates the largest integer divisor of both x and y.
 
