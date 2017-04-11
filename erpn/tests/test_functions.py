@@ -21,8 +21,8 @@ class FunctionTest(unittest.TestCase):
         else:
             # We are looking for "close enough", but we can't check the whole stack this way
             self.assertEqual(len(stack), len(result_stack))
-            for x,y in zip(stack, result_stack):
-                self.assertAlmostEqual(x,y,delta=delta)
+            for x, y in zip(stack, result_stack):
+                self.assertAlmostEqual(x, y, delta=delta)
         self.assertEqual(len(undo_stack), undo_length)
         for _ in range(undo_length):
             undo_stack.pop().apply(stack)

@@ -172,7 +172,7 @@ cd ERPN
 Create a virtual environment with `pyvenv venv` or (for python 3.6 and up)
 `python3 -m venv venv`.
 
-Load it into your environment, the methed deponds on your shell. For bash it's `source venv/bin/activate`
+Load it into your environment, the method depends on your shell. For bash it's `source venv/bin/activate`
 
 Now install the package into the venv, using the "develop" command so you don't need to reinstall to apply changes
 ```bash
