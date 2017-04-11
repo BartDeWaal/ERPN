@@ -74,6 +74,9 @@ Bound to `+`. Calculates x+y.
 
 If there is nothing in the stack, it will return a default value of 0.
 
+#### Ceiling
+Bound to `~`. Rounds x up to the first larger integer.
+
 #### Delete
 Bound to `x`. Removes item x from the stack.
 
@@ -90,6 +93,9 @@ Bound to `p` (p for power). Calculates y^x.
 
 #### Factorial
 Bound to `!`. Calculates x!, i.e. x*(x-1)*(x-2)*...*2*1.
+
+#### Floor
+Bound to `` ` `` (backtick). Rounds x down to the first smaller integer.
 
 #### GCD (Greatest common divisor)
 Bound to `#`. Calculates the largest integer divisor of both x and y.

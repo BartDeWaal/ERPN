@@ -332,5 +332,39 @@ class FactorialTest(FunctionTest):
                                   arrow_location=2, undo_length=2)
 
 
+class FloorTest(FunctionTest):
+    function = f.floor
+
+    def test_floor(self):
+        self.compare_input_result(initial_stack=[1.9],
+                                  result_stack=[1.0])
+        self.compare_input_result(initial_stack=[-1.1],
+                                  result_stack=[-2.0])
+        self.compare_input_result(initial_stack=[1.0],
+                                  result_stack=[1.0])
+
+    def test_floor_arrow(self):
+        self.compare_input_result(initial_stack=[10.4, 4.0, 25.0],
+                                  result_stack=[10.4, 4.0, 25.0, 10.0],
+                                  arrow_location=2, undo_length=2)
+
+
+class CeilTest(FunctionTest):
+    function = f.ceil
+
+    def test_ceil(self):
+        self.compare_input_result(initial_stack=[1.9],
+                                  result_stack=[2.0])
+        self.compare_input_result(initial_stack=[-1.1],
+                                  result_stack=[-1.0])
+        self.compare_input_result(initial_stack=[1.0],
+                                  result_stack=[1.0])
+
+    def test_ceil_arrow(self):
+        self.compare_input_result(initial_stack=[10.4, 4.0, 25.0],
+                                  result_stack=[10.4, 4.0, 25.0, 11.0],
+                                  arrow_location=2, undo_length=2)
+
+
 if __name__ == '__main__':
     unittest.main()
