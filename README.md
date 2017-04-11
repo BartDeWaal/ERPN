@@ -149,6 +149,19 @@ Bound to `-`. Calculates y-x.
 #### Switch 2
 Bound to tab. Swaps x and y.
 
+#### Trigonomic functions
+The most important trigonomic functions are also included.
+These all work based on radians, and are not currently settable to degrees.
+
+Sin is bound to `meta s`.  
+Arcsin is bound to `meta S`.
+
+Cos is bound to `meta c`.  
+Arccos is bound to `meta C`.
+
+Tan is bound to `meta t`.  
+Arctan is bound to `meta T`.
+
 ## Development Setup on Linux
 Clone the repository into a directory.
 ```bash

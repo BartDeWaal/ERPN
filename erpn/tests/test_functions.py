@@ -10,11 +10,19 @@ import erpn.functions as f
 
 class FunctionTest(unittest.TestCase):
     """ Template class for all the individual function tests """
-    def compare_input_result(self, initial_stack, result_stack, undo_length=1, arrow_location=0):
+    def compare_input_result(self, initial_stack, result_stack,
+                             undo_length=1, arrow_location=0,
+                             delta=None):
         stack = initial_stack.copy()
         undo_stack = []
         self.function.run(stack, undo_stack, arrow_location)
-        self.assertEqual(stack, result_stack)
+        if delta is None:
+            self.assertEqual(stack, result_stack)
+        else:
+            # We are looking for "close enough", but we can't check the whole stack this way
+            self.assertEqual(len(stack), len(result_stack))
+            for x,y in zip(stack, result_stack):
+                self.assertAlmostEqual(x,y,delta=delta)
         self.assertEqual(len(undo_stack), undo_length)
         for _ in range(undo_length):
             undo_stack.pop().apply(stack)
@@ -181,11 +189,11 @@ class PowerTenTest(FunctionTest):
 class PowerETest(FunctionTest):
     function = f.power_e
 
-    def test_power10(self):
+    def test_power_e(self):
         self.compare_input_result(initial_stack=[2.0],
                                   result_stack=[7.389056098930650227230427460575007813180315570551847324087])
 
-    def test_power10_arrow(self):
+    def test_power_e_arrow(self):
         self.compare_input_result(initial_stack=[1.0, 4.0],
                                   result_stack=[1.0, 4.0, math.e],
                                   arrow_location=1, undo_length=2)
@@ -364,6 +372,94 @@ class CeilTest(FunctionTest):
         self.compare_input_result(initial_stack=[10.4, 4.0, 25.0],
                                   result_stack=[10.4, 4.0, 25.0, 11.0],
                                   arrow_location=2, undo_length=2)
+
+
+class SinTest(FunctionTest):
+    function = f.sin
+
+    def test_sin(self):
+        # Because I want to test so many identities, I put them in a list
+        for x, res in [(0.0, 0.0), (math.pi, 0.0), (math.pi/2, 1.0),
+                       (math.pi/4, math.sqrt(2)/2), (math.pi*1.5, -1.0),
+                       (math.pi*2.5, 1.0), (-math.pi/2, -1.0)]:
+            self.compare_input_result(initial_stack=[x],
+                                      result_stack=[res], delta=1e-15)
+
+    def test_sin_arrow(self):
+        self.compare_input_result(initial_stack=[math.pi/2, 4.0, 25.0],
+                                  result_stack=[math.pi/2, 4.0, 25.0, 1.0],
+                                  arrow_location=2, undo_length=2, delta=1e-15)
+
+
+class ArcsinTest(FunctionTest):
+    function = f.arcsin
+
+    def test_arcsin(self):
+        self.compare_input_result(initial_stack=[1.0],
+                                  result_stack=[math.pi/2])
+
+    def test_arcsin_arrow(self):
+        self.compare_input_result(initial_stack=[1.0, 5.0, 23.0],
+                                  result_stack=[1.0, 5.0, 23.0, math.pi/2],
+                                  arrow_location=2, undo_length=2)
+
+
+class CosTest(FunctionTest):
+    function = f.cos
+
+    def test_cos(self):
+        for x, res in [(0.0, 1.0), (math.pi, -1.0), (math.pi/2, 0.0),
+                       (math.pi/4, math.sqrt(2)/2), (math.pi*1.5, 0.0),
+                       (math.pi*2.5, 0.0), (-math.pi, -1.0)]:
+            self.compare_input_result(initial_stack=[x],
+                                      result_stack=[res], delta=1e-15)
+
+    def test_cos_arrow(self):
+        self.compare_input_result(initial_stack=[math.pi/2, 4.0, 25.0],
+                                  result_stack=[math.pi/2, 4.0, 25.0, 0.0],
+                                  arrow_location=2, undo_length=2, delta=1e-15)
+
+
+class ArccosTest(FunctionTest):
+    function = f.arccos
+
+    def test_arccos(self):
+        self.compare_input_result(initial_stack=[0.0],
+                                  result_stack=[math.pi/2])
+
+    def test_arccos_arrow(self):
+        self.compare_input_result(initial_stack=[0.0, 5.0, 23.0],
+                                  result_stack=[0.0, 5.0, 23.0, math.pi/2],
+                                  arrow_location=2, undo_length=2)
+
+
+class TanTest(FunctionTest):
+    function = f.tan
+
+    def test_tan(self):
+        for x, res in [(0.0, 0.0), (math.pi*1.25, 1.0), (math.pi*-0.75, 1.0),
+                       (math.pi*0.75, -1), (math.pi/3, math.sqrt(3))]:
+            self.compare_input_result(initial_stack=[x],
+                                      result_stack=[res], delta=1e-15)
+
+    def test_tan_arrow(self):
+        self.compare_input_result(initial_stack=[math.pi/4, 4.0, 25.0],
+                                  result_stack=[math.pi/4, 4.0, 25.0, 1.0],
+                                  arrow_location=2, undo_length=2, delta=1e-15)
+
+
+class ArctanTest(FunctionTest):
+    function = f.arctan
+
+    def test_arctan(self):
+        for x, res in [(1.0, math.pi/4), (0.0, 0.0)]:
+            self.compare_input_result(initial_stack=[x],
+                                      result_stack=[res], delta=1e-15)
+
+    def test_arctan_arrow(self):
+        self.compare_input_result(initial_stack=[-1.0, 4.0, 25.0],
+                                  result_stack=[-1.0, 4.0, 25.0, -math.pi/4],
+                                  arrow_location=2, undo_length=2, delta=1e-15)
 
 
 if __name__ == '__main__':
