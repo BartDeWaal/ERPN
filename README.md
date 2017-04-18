@@ -1,10 +1,6 @@
 # ERPN
 *An RPN  calculator written in Python*
 
-**This is not yet ready for use**
-Keyboard shortcuts, layout and other major interface changes will still be made
-without remorse.
-
 The goal is to create a calculator that has a much easier and more usable
 interface for "live" use than dc.
 

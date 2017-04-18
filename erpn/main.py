@@ -9,7 +9,7 @@ from argparse import ArgumentParser
 from .buttonMappings import loadMappings
 from .urwidInterface import Interface
 
-version = '0.3'
+version = '1.0'
 website = 'https://github.com/BartDeWaal/ERPN'
 
 interface = Interface()
