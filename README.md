@@ -41,8 +41,10 @@ You can enter a number with an exponent. So for example `0.1e-4`.
 Some of the keys in the sidebar as listed "meta" something. Some people call
 that key "Alt" instead.
 
+To copy the top value in the stack use `space` or `enter`.
+
 You can move a marker up and down using the arrows (or the `j` and `k` keys).
-You can then use `enter` or space to copy that value to the end of the stack,
+You can then use `enter` or `space` to copy that value to the end of the stack,
 or you can run most functions to first copy the selected item to the end of the
 stack and then run the function.
 
@@ -67,6 +69,8 @@ exponent is always a multiple of 3. So for example `100e6`.
 **No Exponent** (`p`) Never show an exponent. Example: `0.000`.
 
 You can change the precision usin `+` and `-`.
+
+### Copy and Paste
 
 ### Functions
 #### Addition

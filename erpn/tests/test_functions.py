@@ -462,5 +462,18 @@ class ArctanTest(FunctionTest):
                                   arrow_location=2, undo_length=2, delta=1e-15)
 
 
+class CopyCurrentTest(FunctionTest):
+    function = f.CopyCurrent()
+
+    def test_copy_current(self):
+        self.compare_input_result(initial_stack=[2.0],
+                                  result_stack=[2.0, 2.0])
+
+    def test_copy_current_arrow(self):
+        self.compare_input_result(initial_stack=[1.0, 1.5, 2.0],
+                                  result_stack=[1.0, 1.5, 2.0, 1.5],
+                                  arrow_location=1)
+
+
 if __name__ == '__main__':
     unittest.main()
