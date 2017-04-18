@@ -105,6 +105,22 @@ class UndoItem:
         return "Undo: Remove {}, add {}".format(self.remove, self.add)
 
 
+class FunctionalUndoItem:
+    def __init__(self, undofunction, redo, undoText="using a function"):
+        """ An action to undo something
+        function: the function that, if given the stack as argument, will undo the action
+        redo: the RPNclass instance to redo this action. It is always run with ArrowLocation=0"""
+        self.text = undoText
+        self.function = undofunction
+        self.redo = redo
+
+    def apply(self, stack):
+        self.function(stack)
+
+    def __str__(self):
+        return "Undo: {}".format(self.text)
+
+
 def multiply_function(items):
     """ Multiply two items from the stack, if there are no two items use 1
     instead """
@@ -337,3 +353,36 @@ class ChangeDisplayFunction(RPNfunction):
 
     def run(self, *args, **kwargs):
         raise ChangeDisplayFormat(self.adj_format)
+
+
+class Switch2(RPNfunction):
+    """ Swap two numbers in the stack, by default the bottom two """
+    def __init__(self, display=True, description="Swap", arrowLocation=None):
+        """ If arrowlocation is not None it will override the arrowlocation
+        given in the run function """
+
+        self.display = display
+        self.description = description
+        self.arrowLocation = arrowLocation
+
+    def run(self, stack, undostack, arrowLocation):
+        if self.arrowLocation is not None:
+            arrowLocation = self.arrowLocation
+        elif arrowLocation == 0:
+            arrowLocation = 1
+
+        def switch2(stack):
+            x = stack.pop(-arrowLocation-1)
+            y = stack.pop()
+
+            stack.append(x)
+            stack.insert(-arrowLocation, y)
+
+        switch2(stack)
+
+        redoItem = Switch2(description="Swap with location {}".format(arrowLocation),
+                           arrowLocation=arrowLocation)
+
+        undoItem = FunctionalUndoItem(switch2, redoItem)
+
+        undostack.append(undoItem)

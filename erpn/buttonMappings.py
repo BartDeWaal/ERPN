@@ -11,7 +11,7 @@ def loadMappings(interface):
     """ Load all the mappings """
     # See utils folder for script that helps figure out what each key does
     interface.add('x', functions.Delete())
-    interface.add('tab', functions.switch2)
+    interface.add('tab', functions.Switch2())
     interface.add('+', functions.addition)
     interface.add('-', functions.subtract)
     interface.add('*', functions.multiply)

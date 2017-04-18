@@ -160,6 +160,8 @@ Bound to `-`. Calculates y-x.
 #### Switch 2
 Bound to tab. Swaps x and y.
 
+If used with the arrow, switches the pointed at item with x.
+
 #### Trigonomic functions
 The most important trigonomic functions are also included.
 These all work based on radians, and are not currently settable to degrees.

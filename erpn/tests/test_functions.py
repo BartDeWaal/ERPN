@@ -60,11 +60,16 @@ class AdditionTest(FunctionTest):
 
 
 class Switch2Test(FunctionTest):
-    function = f.switch2
+    function = f.Switch2()
 
     def test_switch2(self):
         self.compare_input_result(initial_stack=[1.0, 2.0, 3.0],
                                   result_stack=[1.0, 3.0, 2.0])
+
+    def test_switch2_arrow(self):
+        self.compare_input_result(initial_stack=[0.0, 1.0, 2.0, 3.0],
+                                  result_stack=[0.0, 3.0, 2.0, 1.0],
+                                  arrow_location=2)
 
 
 class DeleteTest(FunctionTest):
