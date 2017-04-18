@@ -41,13 +41,6 @@ You can enter a number with an exponent. So for example `0.1e-4`.
 Some of the keys in the sidebar as listed "meta" something. Some people call
 that key "Alt" instead.
 
-To copy the top value in the stack use `space` or `enter`.
-
-You can move a marker up and down using the arrows (or the `j` and `k` keys).
-You can then use `enter` or `space` to copy that value to the end of the stack,
-or you can run most functions to first copy the selected item to the end of the
-stack and then run the function.
-
 `meta p` and `meta e` are used to enter pi (3.14...) and e (eulers constant,
 2.718...) onto the stack.
 
@@ -71,6 +64,20 @@ exponent is always a multiple of 3. So for example `100e6`.
 You can change the precision usin `+` and `-`.
 
 ### Copy and Paste
+#### Within the stack
+To copy the top value in the stack use `space` or `enter`.
+
+You can move a marker up and down using the arrows (or the `j` and `k` keys).
+You can then use `enter` or `space` to copy that value to the end of the stack,
+or you can run most functions to first copy the selected item to the end of the
+stack and then run the function.
+
+#### From the OS
+You can copy to the OS (so you can use the results of your calculation
+elsewhere) using the `c` button.
+It will be formatted without regard to the current display settings.
+
+To paste a value from the OS you use the `p` button.
 
 ### Functions
 #### Addition

@@ -6,6 +6,7 @@
 import unittest
 import math
 import erpn.functions as f
+from pyperclip import copy, paste
 
 
 class FunctionTest(unittest.TestCase):
@@ -19,13 +20,21 @@ class FunctionTest(unittest.TestCase):
         if delta is None:
             self.assertEqual(stack, result_stack)
         else:
-            # We are looking for "close enough", but we can't check the whole stack this way
+            # We are looking for "close enough", but we can't check the whole
+            # stack this way
             self.assertEqual(len(stack), len(result_stack))
             for x, y in zip(stack, result_stack):
                 self.assertAlmostEqual(x, y, delta=delta)
         self.assertEqual(len(undo_stack), undo_length)
         for _ in range(undo_length):
             undo_stack.pop().apply(stack)
+        self.assertEqual(stack, initial_stack)
+
+    def expect_error(self, initial_stack, expected_error, arrow_location=0):
+        stack = initial_stack.copy()
+        with self.assertRaises(expected_error):
+            self.function.run(stack, [], arrow_location)
+        # The failed run should not change the sack
         self.assertEqual(stack, initial_stack)
 
 
@@ -473,6 +482,39 @@ class CopyCurrentTest(FunctionTest):
         self.compare_input_result(initial_stack=[1.0, 1.5, 2.0],
                                   result_stack=[1.0, 1.5, 2.0, 1.5],
                                   arrow_location=1)
+
+
+class PasteTest(FunctionTest):
+    function = f.PasteFromOS()
+
+    def test_paste(self):
+        copy("1.0")
+        self.compare_input_result(initial_stack=[], result_stack=[1.0])
+
+    def test_paste_negative(self):
+        copy("-1.0")
+        self.compare_input_result(initial_stack=[], result_stack=[-1.0])
+
+    def test_paste_e(self):
+        copy("1e6")
+        self.compare_input_result(initial_stack=[],
+                                  result_stack=[1000000])
+
+    def test_paste_error(self):
+        copy("Random Noise")
+        self.expect_error(initial_stack=[], expected_error=f.DomainError)
+
+
+class CopyTest(unittest.TestCase):
+    copy = f.copy_to_OS
+
+    def test_copy(self):
+        self.copy.run([3.0], [], 0)
+        self.assertEqual("3.0", paste())
+
+    def test_copy_negative(self):
+        self.copy.run([-3.0], [], 0)
+        self.assertEqual("-3.0", paste())
 
 
 if __name__ == '__main__':
